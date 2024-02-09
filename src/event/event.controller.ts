@@ -8,15 +8,14 @@ import {
   Delete,
 } from '@nestjs/common';
 import { EventService } from './event.service';
-import { CreateEventDto } from './dto/create-event.dto';
-import { UpdateEventDto } from './dto/update-event.dto';
+import { Event } from '@prisma/client';
 
 @Controller('event')
 export class EventController {
   constructor(private readonly eventService: EventService) {}
 
   @Post()
-  create(@Body() createEventDto: CreateEventDto) {
+  create(@Body() createEventDto: Event) {
     return this.eventService.create(createEventDto);
   }
 
@@ -27,16 +26,16 @@ export class EventController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.eventService.findOne(+id);
+    return this.eventService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto) {
-    return this.eventService.update(+id, updateEventDto);
+  update(@Param('id') id: string, @Body() updateEvent: Event) {
+    return this.eventService.update(updateEvent);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.eventService.remove(+id);
+    return this.eventService.remove(id);
   }
 }

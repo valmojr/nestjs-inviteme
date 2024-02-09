@@ -1,26 +1,66 @@
 import { Injectable } from '@nestjs/common';
-import { CreateEventDto } from './dto/create-event.dto';
-import { UpdateEventDto } from './dto/update-event.dto';
+import { PrismaService } from 'src/prisma.service';
+import { Event } from '@prisma/client';
 
 @Injectable()
 export class EventService {
-  create(createEventDto: CreateEventDto) {
-    return 'This action adds a new event';
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async create(data: Event) {
+    return await this.prismaService.event.create({
+      data: {
+        ...data,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    });
   }
 
-  findAll() {
-    return `This action returns all event`;
+  async findAll() {
+    return await this.prismaService.event.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} event`;
+  async findOne(idOrEvent: string | Event) {
+    if (typeof idOrEvent === 'string') {
+      return await this.prismaService.event.findUnique({
+        where: {
+          id: idOrEvent,
+        },
+      });
+    } else {
+      return await this.prismaService.event.findUnique({
+        where: {
+          id: idOrEvent.id,
+        },
+      });
+    }
   }
 
-  update(id: number, updateEventDto: UpdateEventDto) {
-    return `This action updates a #${id} event`;
+  async update(updateEvent: Event) {
+    return await this.prismaService.event.update({
+      where: {
+        id: updateEvent.id,
+      },
+      data: {
+        ...updateEvent,
+        updatedAt: new Date(),
+      },
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} event`;
+  async remove(idOrEvent: string | Event) {
+    if (typeof idOrEvent === 'string') {
+      return await this.prismaService.event.delete({
+        where: {
+          id: idOrEvent,
+        },
+      });
+    } else {
+      return await this.prismaService.event.delete({
+        where: {
+          id: idOrEvent.id,
+        },
+      });
+    }
   }
 }
