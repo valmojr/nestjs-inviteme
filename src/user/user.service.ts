@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { CreateUser, UpdateUser } from './entities/user.entity';
 import { randomUUID } from 'crypto';
 import { User } from '@prisma/client';
 
@@ -8,7 +7,9 @@ import { User } from '@prisma/client';
 export class UserService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(data: CreateUser) {
+  async create(
+    data: Omit<User, 'id' | 'password' | 'createdAt' | 'updatedAt'>,
+  ) {
     return await this.prismaService.user.create({
       data: {
         id: randomUUID(),
@@ -23,36 +24,28 @@ export class UserService {
     return await this.prismaService.user.findMany();
   }
 
-  async findById(id: string) {
+  async findOne(fidOrUser: string | User) {
     return await this.prismaService.user.findUnique({
       where: {
-        id,
+        id: typeof fidOrUser === 'string' ? fidOrUser : fidOrUser.id,
       },
     });
   }
 
-  async update(id: string, data: UpdateUser) {
+  async update(data: User) {
     return await this.prismaService.user.update({
       where: {
-        id,
+        id: data.id,
       },
       data: { updatedAt: new Date(), ...data },
     });
   }
 
   async remove(idOrUser: string | User) {
-    if (typeof idOrUser === 'string') {
-      return await this.prismaService.user.delete({
-        where: {
-          id: idOrUser,
-        },
-      });
-    } else {
-      return await this.prismaService.user.delete({
-        where: {
-          id: idOrUser.id,
-        },
-      });
-    }
+    return await this.prismaService.user.delete({
+      where: {
+        id: typeof idOrUser === 'string' ? idOrUser : idOrUser.id,
+      },
+    });
   }
 }

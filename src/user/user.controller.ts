@@ -8,14 +8,17 @@ import {
   Delete,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUser, UpdateUser } from './entities/user.entity';
+import { User } from '@prisma/client';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUser) {
+  create(
+    @Body()
+    createUserDto: Omit<User, 'id' | 'password' | 'createdAt' | 'updatedAt'>,
+  ) {
     return this.userService.create(createUserDto);
   }
 
@@ -26,12 +29,12 @@ export class UserController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.userService.findById(id);
+    return this.userService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUser) {
-    return this.userService.update(id, updateUserDto);
+  update(@Param('id') id: string, @Body() updateUserDto: User) {
+    return this.userService.update(updateUserDto);
   }
 
   @Delete(':id')
