@@ -1,11 +1,81 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+model User {
+  id          String   @id @unique @default(cuid())
+  discordId   String?  @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  username    String   @unique
+  displayName String?
+  password    String?
+  avatar      String?
+  email       String?  @unique
+  bannerColor String?
+  roles       Role[]
+  ownedEvents Event[]  @relation("UserToOwnedEvents")
+  houses      House[]
+  events      Event[]  @relation("UserToAttendedEvents")
+}
+
+model Role {
+  id        String   @id @unique @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  groupID   String?
+  group     Group?   @relation(fields: [groupID], references: [id])
+}
+
+model Group {
+  id                   String   @id @unique @default(cuid())
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  name                 String
+  roleIDs              String[]
+  roles                Role[]
+  childGroups          Group[]  @relation("GroupToFatherGroup")
+  fatherGroupID        String?
+  fatherGroup          Group?   @relation("GroupToFatherGroup", fields: [fatherGroupID], references: [id])
+  isFatherGroupOfEvent Event?   @relation("fatherGroupToEvent")
+  eventID              String
+  event                Event    @relation("GroupsToEvent", fields: [eventID], references: [id])
+}
+
+model Event {
+  id          String    @id @unique @default(cuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  startDate   DateTime
+  endDate     DateTime?
+  name        String
+  thumbnail   String?
+  mainGroupID String?   @unique
+  mainGroup   Group?    @relation("fatherGroupToEvent", fields: [mainGroupID], references: [id])
+  ownerID     String
+  owner       User      @relation("UserToOwnedEvents", fields: [ownerID], references: [id])
+  location    String?
+  description String?
+  House       House[]
+  users       User[]    @relation("UserToAttendedEvents")
+  groups      Group[]   @relation("GroupsToEvent")
+}
+
+model House {
+  id        String   @id @unique @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+  avatar    String?
+  users     User[]
+  events    Event[]
 }
