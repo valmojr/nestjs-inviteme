@@ -5,6 +5,7 @@ import { GroupModule } from './group/group.module';
 import { HouseModule } from './house/house.module';
 import { UserModule } from './user/user.module';
 import { RoleModule } from './role/role.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { RoleModule } from './role/role.module';
     HouseModule,
     UserModule,
     RoleModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
