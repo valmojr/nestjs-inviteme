@@ -6,11 +6,17 @@ import { HouseModule } from './house/house.module';
 import { UserModule } from './user/user.module';
 import { RoleModule } from './role/role.module';
 import { AuthModule } from './auth/auth.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: ['.env.local', '.env.dev'],
+    }),
+    JwtModule.register({
+      global: true,
+      secret: process.env.AUTH_SECRET,
+      signOptions: { expiresIn: '1d' },
     }),
     EventModule,
     GroupModule,
