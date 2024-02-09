@@ -1,26 +1,50 @@
 import { Injectable } from '@nestjs/common';
-import { CreateGroupDto } from './dto/create-group.dto';
-import { UpdateGroupDto } from './dto/update-group.dto';
+import { Group } from '@prisma/client';
+import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
 export class GroupService {
-  create(createGroupDto: CreateGroupDto) {
-    return 'This action adds a new group';
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async create(group: Group) {
+    return await this.prismaService.group.create({
+      data: {
+        ...group,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    });
   }
 
-  findAll() {
-    return `This action returns all group`;
+  async findAll() {
+    return await this.prismaService.group.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} group`;
+  async findOne(idOrGroup: string | Group) {
+    return await this.prismaService.group.findUnique({
+      where: {
+        id: typeof idOrGroup === 'string' ? idOrGroup : idOrGroup.id,
+      },
+    });
   }
 
-  update(id: number, updateGroupDto: UpdateGroupDto) {
-    return `This action updates a #${id} group`;
+  async update(group: Group) {
+    return await this.prismaService.group.update({
+      where: {
+        id: group.id,
+      },
+      data: {
+        ...group,
+        updatedAt: new Date(),
+      },
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} group`;
+  async remove(idOrGroup: string | Group) {
+    return await this.prismaService.group.delete({
+      where: {
+        id: typeof idOrGroup === 'string' ? idOrGroup : idOrGroup.id,
+      },
+    });
   }
 }
