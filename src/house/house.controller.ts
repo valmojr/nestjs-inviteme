@@ -8,16 +8,15 @@ import {
   Delete,
 } from '@nestjs/common';
 import { HouseService } from './house.service';
-import { CreateHouseDto } from './dto/create-house.dto';
-import { UpdateHouseDto } from './dto/update-house.dto';
+import { House } from '@prisma/client';
 
 @Controller('house')
 export class HouseController {
   constructor(private readonly houseService: HouseService) {}
 
   @Post()
-  create(@Body() createHouseDto: CreateHouseDto) {
-    return this.houseService.create(createHouseDto);
+  create(@Body() data: House) {
+    return this.houseService.create(data);
   }
 
   @Get()
@@ -27,16 +26,26 @@ export class HouseController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.houseService.findOne(+id);
+    return this.houseService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateHouseDto: UpdateHouseDto) {
-    return this.houseService.update(+id, updateHouseDto);
+  update(@Body() data: House) {
+    return this.houseService.update(data);
+  }
+
+  @Patch()
+  updateByBody(@Body() data: House) {
+    return this.houseService.update(data);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.houseService.remove(+id);
+    return this.houseService.remove(id);
+  }
+
+  @Delete()
+  removeByBody(@Body() data: string) {
+    return this.houseService.remove(data);
   }
 }

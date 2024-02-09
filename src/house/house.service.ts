@@ -1,26 +1,45 @@
 import { Injectable } from '@nestjs/common';
-import { CreateHouseDto } from './dto/create-house.dto';
-import { UpdateHouseDto } from './dto/update-house.dto';
+import { House } from '@prisma/client';
+import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
 export class HouseService {
-  create(createHouseDto: CreateHouseDto) {
-    return 'This action adds a new house';
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async create(data: House) {
+    return await this.prismaService.house.create({
+      data: {
+        ...data,
+      },
+    });
   }
 
-  findAll() {
-    return `This action returns all house`;
+  async findAll() {
+    return await this.prismaService.house.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} house`;
+  async findOne(idOrHouse: string | House) {
+    return await this.prismaService.house.findUnique({
+      where: {
+        id: typeof idOrHouse === 'string' ? idOrHouse : idOrHouse.id,
+      },
+    });
   }
 
-  update(id: number, updateHouseDto: UpdateHouseDto) {
-    return `This action updates a #${id} house`;
+  async update(data: House) {
+    return await this.prismaService.house.update({
+      where: {
+        id: data.id,
+      },
+      data: { ...data, updatedAt: new Date() },
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} house`;
+  async remove(data: string | House) {
+    return await this.prismaService.house.delete({
+      where: {
+        id: typeof data === 'string' ? data : data.id,
+      },
+    });
   }
 }
