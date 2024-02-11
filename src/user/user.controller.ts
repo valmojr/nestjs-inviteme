@@ -6,10 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from '@prisma/client';
+import { AuthGuard } from 'src/auth/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -17,7 +20,7 @@ export class UserController {
   @Post()
   create(
     @Body()
-    createUserDto: Omit<User, 'id' | 'password' | 'createdAt' | 'updatedAt'>,
+    createUserDto: Omit<User, 'id' | 'createdAt' | 'updatedAt'>,
   ) {
     return this.userService.create(createUserDto);
   }

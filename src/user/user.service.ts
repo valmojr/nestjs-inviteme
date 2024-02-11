@@ -8,7 +8,7 @@ export class UserService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async create(
-    data: Omit<User, 'id' | 'password' | 'createdAt' | 'updatedAt'>,
+    data: Omit<User, 'id' | 'createdAt' | 'updatedAt' | 'discordId'>,
   ) {
     return await this.prismaService.user.create({
       data: {
