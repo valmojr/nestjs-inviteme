@@ -29,9 +29,14 @@ export class EventController {
     return this.eventService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateEvent: Event) {
+  @Patch()
+  update(@Body() updateEvent: Event) {
     return this.eventService.update(updateEvent);
+  }
+
+  @Patch(':id')
+  updateById(@Param('id') id: string, @Body() updateEvent: Event) {
+    return this.eventService.update({ id, ...updateEvent });
   }
 
   @Delete(':id')
