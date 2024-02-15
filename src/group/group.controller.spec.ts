@@ -1,22 +1,17 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { TestingModule } from '@nestjs/testing';
 import { GroupController } from './group.controller';
 import { GroupService } from './group.service';
 import { PrismaService } from '../prisma.service';
-import { ConfigModule } from '@nestjs/config';
+import TestModuleBuilder from '../../test/test.module';
 
 describe('GroupController', () => {
   let controller: GroupController;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        ConfigModule.forRoot({
-          envFilePath: ['.env.local', '.env.dev'],
-        }),
-      ],
+    const module: TestingModule = await TestModuleBuilder({
       controllers: [GroupController],
       providers: [PrismaService, GroupService],
-    }).compile();
+    });
 
     controller = module.get<GroupController>(GroupController);
   });

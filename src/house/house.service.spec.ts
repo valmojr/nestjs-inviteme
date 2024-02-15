@@ -1,20 +1,15 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { TestingModule } from '@nestjs/testing';
 import { HouseService } from './house.service';
 import { PrismaService } from '../prisma.service';
-import { ConfigModule } from '@nestjs/config';
+import TestModuleBuilder from '../../test/test.module';
 
 describe('HouseService', () => {
   let service: HouseService;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        ConfigModule.forRoot({
-          envFilePath: ['.env.local', '.env.dev'],
-        }),
-      ],
+    const module: TestingModule = await TestModuleBuilder({
       providers: [PrismaService, HouseService],
-    }).compile();
+    });
 
     service = module.get<HouseService>(HouseService);
   });
