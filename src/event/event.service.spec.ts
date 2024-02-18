@@ -2,6 +2,7 @@ import { TestingModule } from '@nestjs/testing';
 import { EventService } from './event.service';
 import { PrismaService } from '../prisma.service';
 import TestModuleBuilder from '../../test/test.module';
+import { randomUUID } from 'crypto';
 
 describe('EventService', () => {
   let service: EventService;
@@ -118,5 +119,186 @@ describe('EventService', () => {
     const newEvent = await service.create(testEvent);
 
     expect(newEvent).toBeDefined();
+  });
+
+  it('should be able to upsert a event', async () => {
+    prisma.event.upsert = jest.fn().mockReturnValueOnce({
+      id: 1,
+      name: 'Event Upserted!',
+      startDate: new Date(),
+      endDate: new Date(),
+      description: 'description',
+      location: 'location',
+      thumbnail: 'thumbnail',
+      mainGroupID: null,
+      ownerID: null,
+    });
+
+    const upsertedEvent = await service.upsert({
+      ...testEvent,
+      id: randomUUID(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    expect(upsertedEvent).toBeDefined();
+    expect(upsertedEvent.name).toBe('Event Upserted!');
+  });
+
+  it('should be able to get all events', async () => {
+    prisma.event.findMany = jest.fn().mockReturnValueOnce([
+      {
+        id: 1,
+        name: 'Event Done!',
+        startDate: new Date(),
+        endDate: new Date(),
+        description: 'description',
+        location: 'location',
+        thumbnail: 'thumbnail',
+        mainGroupID: null,
+        ownerID: null,
+      },
+    ]);
+
+    const allEvents = await service.findAll();
+
+    expect(allEvents).toBeDefined();
+    expect(allEvents.length).toBe(1);
+  });
+
+  it('should be able to get one event by id', async () => {
+    const testId = randomUUID();
+
+    prisma.event.findUnique = jest.fn().mockReturnValueOnce({
+      id: testId,
+      name: 'Event Done!',
+      startDate: new Date(),
+      endDate: new Date(),
+      description: 'description',
+      location: 'location',
+      thumbnail: 'thumbnail',
+      mainGroupID: null,
+      ownerID: null,
+    });
+
+    const oneEvent = await service.findOne(testId);
+
+    expect(oneEvent).toBeDefined();
+    expect(oneEvent.name).toBe('Event Done!');
+    expect(oneEvent.id).toBe(testId);
+  });
+
+  it('should be able to get one event by event object', async () => {
+    const testId = randomUUID();
+
+    prisma.event.findUnique = jest.fn().mockReturnValueOnce({
+      id: testId,
+      name: 'Event Done!',
+      startDate: new Date(),
+      endDate: new Date(),
+      description: 'description',
+      location: 'location',
+      thumbnail: 'thumbnail',
+      mainGroupID: null,
+      ownerID: null,
+    });
+
+    const oneEvent = await service.findOne({
+      id: testId,
+      name: 'Event Done!',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      startDate: new Date(),
+      endDate: new Date(),
+      description: 'description',
+      location: 'location',
+      thumbnail: 'thumbnail',
+      mainGroupID: null,
+      ownerID: 'something',
+    });
+
+    expect(oneEvent).toBeDefined();
+    expect(oneEvent.name).toBe('Event Done!');
+    expect(oneEvent.id).toBe(testId);
+  });
+
+  it('should be able to update a event', async () => {
+    prisma.event.update = jest.fn().mockReturnValueOnce({
+      id: 1,
+      name: 'Event Updated!',
+      startDate: new Date(),
+      endDate: new Date(),
+      description: 'description',
+      location: 'location',
+      thumbnail: 'thumbnail',
+      mainGroupID: null,
+      ownerID: null,
+    });
+
+    const updatedEvent = await service.update({
+      ...testEvent,
+      id: randomUUID(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    expect(updatedEvent).toBeDefined();
+    expect(updatedEvent.name).toBe('Event Updated!');
+  });
+
+  it('should be able to delete a event by id', async () => {
+    const testId = randomUUID();
+
+    prisma.event.delete = jest.fn().mockReturnValueOnce({
+      id: testId,
+      name: 'Event Deleted!',
+      startDate: new Date(),
+      endDate: new Date(),
+      description: 'description',
+      location: 'location',
+      thumbnail: 'thumbnail',
+      mainGroupID: null,
+      ownerID: null,
+    });
+
+    const deletedEvent = await service.remove(testId);
+
+    expect(deletedEvent).toBeDefined();
+    expect(deletedEvent.name).toBe('Event Deleted!');
+    expect(deletedEvent.id).toBe(testId);
+  });
+
+  it('should be able to delete a event by event object', async () => {
+    const testId = randomUUID();
+
+    prisma.event.delete = jest.fn().mockReturnValueOnce({
+      id: testId,
+      name: 'Event Deleted!',
+      startDate: new Date(),
+      endDate: new Date(),
+      description: 'description',
+      location: 'location',
+      thumbnail: 'thumbnail',
+      mainGroupID: null,
+      ownerID: null,
+    });
+
+    const deletedEvent = await service.remove({
+      id: testId,
+      name: 'Event Deleted!',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      startDate: new Date(),
+      endDate: new Date(),
+      description: 'description',
+      location: 'location',
+      thumbnail: 'thumbnail',
+      mainGroupID: null,
+      ownerID: 'something',
+    });
+
+    expect(deletedEvent).toBeDefined();
+    expect(deletedEvent.name).toBe('Event Deleted!');
+    expect(deletedEvent.id).toBe(testId);
   });
 });
