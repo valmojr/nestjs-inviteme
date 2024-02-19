@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { Event } from '@prisma/client';
 import { randomUUID } from 'crypto';
 import { CreateEventDTO } from './event.type';

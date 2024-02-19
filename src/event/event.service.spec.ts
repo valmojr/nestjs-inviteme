@@ -1,6 +1,6 @@
 import { TestingModule } from '@nestjs/testing';
 import { EventService } from './event.service';
-import { PrismaService } from '../prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import TestModuleBuilder from '../../test/test.module';
 import { randomUUID } from 'crypto';
 
