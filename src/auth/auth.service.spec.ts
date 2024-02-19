@@ -23,6 +23,8 @@ describe('AuthService', () => {
 
     service = module.get<AuthService>(AuthService);
     prisma = module.get<PrismaService>(PrismaService);
+
+    process.env.AUTH_SECRET = 'super_secret_key';
   });
 
   it('should be defined', () => {
@@ -51,7 +53,7 @@ describe('AuthService', () => {
 
   describe('Identity Checker Tests', () => {
     const invalidToken = 'invalid-token';
-    const validToken = sign(testUser, process.env.JWT_SECRET);
+    const validToken = sign(testUser, 'super_secret_key');
 
     it('should not be able to check the identity if the token provided is invalid', async () => {
       try {
@@ -68,6 +70,14 @@ describe('AuthService', () => {
       const auth = await service.getMe(validToken);
 
       expect(auth).toMatchObject(testUser);
+    });
+
+    it('should return false on ghost identity', async () => {
+      prisma.user.findUnique = jest.fn().mockReturnValueOnce(undefined);
+
+      const auth = await service.getMe(validToken);
+
+      expect(auth).toBe(false);
     });
   });
 });
