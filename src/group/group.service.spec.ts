@@ -7,9 +7,11 @@ describe('GroupService', () => {
   let service: GroupService;
 
   beforeEach(async () => {
-    const module: TestingModule = await TestModuleBuilder({
-      providers: [PrismaService, GroupService],
-    });
+    const module: TestingModule = await (
+      await TestModuleBuilder({
+        providers: [PrismaService, GroupService],
+      })
+    ).compile();
 
     service = module.get<GroupService>(GroupService);
   });

@@ -8,10 +8,12 @@ describe('GroupController', () => {
   let controller: GroupController;
 
   beforeEach(async () => {
-    const module: TestingModule = await TestModuleBuilder({
-      controllers: [GroupController],
-      providers: [PrismaService, GroupService],
-    });
+    const module: TestingModule = await (
+      await TestModuleBuilder({
+        controllers: [GroupController],
+        providers: [PrismaService, GroupService],
+      })
+    ).compile();
 
     controller = module.get<GroupController>(GroupController);
   });

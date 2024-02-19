@@ -8,10 +8,12 @@ describe('EventController', () => {
   let controller: EventController;
 
   beforeEach(async () => {
-    const module: TestingModule = await TestModuleBuilder({
-      controllers: [EventController],
-      providers: [PrismaService, EventService],
-    });
+    const module: TestingModule = await (
+      await TestModuleBuilder({
+        controllers: [EventController],
+        providers: [PrismaService, EventService],
+      })
+    ).compile();
 
     controller = module.get<EventController>(EventController);
   });

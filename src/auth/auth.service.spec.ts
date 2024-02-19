@@ -17,9 +17,11 @@ describe('AuthService', () => {
   };
 
   beforeEach(async () => {
-    const module: TestingModule = await TestModuleBuilder({
-      providers: [PrismaService, AuthService, UserService],
-    });
+    const module: TestingModule = await (
+      await TestModuleBuilder({
+        providers: [PrismaService, AuthService, UserService],
+      })
+    ).compile();
 
     service = module.get<AuthService>(AuthService);
     prisma = module.get<PrismaService>(PrismaService);

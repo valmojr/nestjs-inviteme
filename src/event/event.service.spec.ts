@@ -20,9 +20,11 @@ describe('EventService', () => {
   };
 
   beforeEach(async () => {
-    const module: TestingModule = await TestModuleBuilder({
-      providers: [PrismaService, EventService],
-    });
+    const module: TestingModule = await (
+      await TestModuleBuilder({
+        providers: [PrismaService, EventService],
+      })
+    ).compile();
 
     service = module.get<EventService>(EventService);
 

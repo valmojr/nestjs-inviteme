@@ -22,5 +22,5 @@ export default async function TestModuleBuilder({
     controllers,
     providers,
     ...metadata,
-  }).compile();
+  });
 }
