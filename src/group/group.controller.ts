@@ -33,12 +33,22 @@ export class GroupController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateGroupDto: Group) {
+  updateById(@Param('id') id: string, @Body() updateGroupDto: Group) {
+    return this.groupService.update({ ...updateGroupDto, id });
+  }
+
+  @Patch()
+  update(@Body() updateGroupDto: Group) {
     return this.groupService.update(updateGroupDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  removeById(@Param('id') id: string) {
     return this.groupService.remove(id);
+  }
+
+  @Delete()
+  remove(@Body() removeGroupDto: Group) {
+    return this.groupService.remove(removeGroupDto.id);
   }
 }
