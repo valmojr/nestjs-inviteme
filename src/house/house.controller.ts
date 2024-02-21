@@ -30,22 +30,22 @@ export class HouseController {
   }
 
   @Patch(':id')
+  updateById(@Param('id') id: string, @Body() data: House) {
+    return this.houseService.update({ ...data, id });
+  }
+
+  @Patch()
   update(@Body() data: House) {
     return this.houseService.update(data);
   }
 
-  @Patch()
-  updateByBody(@Body() data: House) {
-    return this.houseService.update(data);
-  }
-
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  removeById(@Param('id') id: string) {
     return this.houseService.remove(id);
   }
 
   @Delete()
-  removeByBody(@Body() data: string) {
+  remove(@Body() data: string) {
     return this.houseService.remove(data);
   }
 }
