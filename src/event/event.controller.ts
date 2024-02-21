@@ -6,10 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { EventService } from './event.service';
 import { Event } from '@prisma/client';
+import { AuthGuard } from '../auth/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('event')
 export class EventController {
   constructor(private readonly eventService: EventService) {}
@@ -29,18 +32,23 @@ export class EventController {
     return this.eventService.findOne(id);
   }
 
-  @Patch()
-  update(@Body() updateEvent: Event) {
-    return this.eventService.update(updateEvent);
-  }
-
   @Patch(':id')
   updateById(@Param('id') id: string, @Body() updateEvent: Event) {
     return this.eventService.update({ id, ...updateEvent });
   }
 
+  @Patch()
+  update(@Body() updateEvent: Event) {
+    return this.eventService.update(updateEvent);
+  }
+
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  removeById(@Param('id') id: string) {
     return this.eventService.remove(id);
+  }
+
+  @Delete()
+  remove(@Body() removeEvent: Event) {
+    return this.eventService.remove(removeEvent.id);
   }
 }
