@@ -24,7 +24,7 @@ function EventChecker(data: Event | CreateEventDTO) {
     throw new Error('Start date must be in the future');
   }
 
-  return data.name !== undefined || data.startDate !== undefined;
+  return true;
 }
 
 @Injectable()
