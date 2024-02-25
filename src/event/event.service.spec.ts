@@ -60,7 +60,7 @@ describe('EventService', () => {
       );
     } catch (error) {
       expect(error).toMatchInlineSnapshot(
-        `[Error: Name and start date are required]`,
+        `[BadRequestException: Name and start date are required]`,
       );
     }
   });
@@ -77,7 +77,7 @@ describe('EventService', () => {
       );
     } catch (error) {
       expect(error).toMatchInlineSnapshot(
-        `[Error: Start date must be a valid date]`,
+        `[BadRequestException: Start date must be a valid date]`,
       );
     }
   });
@@ -94,7 +94,7 @@ describe('EventService', () => {
       );
     } catch (error) {
       expect(error).toMatchInlineSnapshot(
-        `[Error: Start date must be in the future]`,
+        `[BadRequestException: Start date must be in the future]`,
       );
     }
   });
@@ -112,7 +112,7 @@ describe('EventService', () => {
       );
     } catch (error) {
       expect(error).toMatchInlineSnapshot(
-        `[Error: Start date must be before end date]`,
+        `[BadRequestException: Start date must be before end date]`,
       );
     }
   });
