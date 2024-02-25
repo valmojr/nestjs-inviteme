@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { randomUUID } from 'crypto';
 import { User } from '@prisma/client';
@@ -10,6 +10,9 @@ export class UserService {
   async create(
     data: Omit<User, 'id' | 'createdAt' | 'updatedAt' | 'discordId'>,
   ) {
+    if (!data) {
+      throw new BadRequestException('Role ID is required');
+    }
     return await this.prismaService.user.create({
       data: {
         id: randomUUID(),
@@ -24,15 +27,21 @@ export class UserService {
     return await this.prismaService.user.findMany();
   }
 
-  async findOne(fidOrUser: string | User) {
+  async findOne(data: string | User) {
+    if (!data) {
+      throw new BadRequestException('Role ID is required');
+    }
     return await this.prismaService.user.findUnique({
       where: {
-        id: typeof fidOrUser === 'string' ? fidOrUser : fidOrUser.id,
+        id: typeof data === 'string' ? data : data.id,
       },
     });
   }
 
   async update(data: User) {
+    if (!data) {
+      throw new BadRequestException('Role ID is required');
+    }
     return await this.prismaService.user.update({
       where: {
         id: data.id,
@@ -41,10 +50,13 @@ export class UserService {
     });
   }
 
-  async remove(idOrUser: string | User) {
+  async remove(data: string | User) {
+    if (!data) {
+      throw new BadRequestException('Role ID is required');
+    }
     return await this.prismaService.user.delete({
       where: {
-        id: typeof idOrUser === 'string' ? idOrUser : idOrUser.id,
+        id: typeof data === 'string' ? data : data.id,
       },
     });
   }

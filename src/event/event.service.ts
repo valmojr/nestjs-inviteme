@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Event } from '@prisma/client';
 import { randomUUID } from 'crypto';
@@ -6,22 +6,23 @@ import { CreateEventDTO } from './event.type';
 
 function EventChecker(data: Event | CreateEventDTO) {
   if (!data.name || !data.startDate) {
-    throw new Error('Name and start date are required');
+    throw new BadRequestException('Name and start date are required');
   }
 
   if (data.startDate && isNaN(data.startDate.getTime())) {
-    throw new Error('Start date must be a valid date');
+    throw new BadRequestException('Start date must be a valid date');
   }
 
   if (data.startDate && data.endDate) {
     if (data.startDate > data.endDate) {
-      throw new Error('Start date must be before end date');
+      throw new BadRequestException('Start date must be before end date');
     }
   }
 
   const now = new Date();
+
   if (data.startDate < now) {
-    throw new Error('Start date must be in the future');
+    throw new BadRequestException('Start date must be in the future');
   }
 
   return true;
@@ -67,19 +68,14 @@ export class EventService {
   }
 
   async findOne(idOrEvent: string | Event) {
-    if (typeof idOrEvent === 'string') {
-      return await this.prismaService.event.findUnique({
-        where: {
-          id: idOrEvent,
-        },
-      });
-    } else {
-      return await this.prismaService.event.findUnique({
-        where: {
-          id: idOrEvent.id,
-        },
-      });
+    if (!idOrEvent) {
+      throw new BadRequestException('Event ID is required');
     }
+    return await this.prismaService.event.findUnique({
+      where: {
+        id: typeof idOrEvent === 'string' ? idOrEvent : idOrEvent.id,
+      },
+    });
   }
 
   async update(updateEvent: Event) {
@@ -95,19 +91,14 @@ export class EventService {
     });
   }
 
-  async remove(idOrEvent: string | Event) {
-    if (typeof idOrEvent === 'string') {
-      return await this.prismaService.event.delete({
-        where: {
-          id: idOrEvent,
-        },
-      });
-    } else {
-      return await this.prismaService.event.delete({
-        where: {
-          id: idOrEvent.id,
-        },
-      });
+  async remove(data: string | Event) {
+    if (!data) {
+      throw new BadRequestException('Event ID is required');
     }
+    return await this.prismaService.event.delete({
+      where: {
+        id: typeof data === 'string' ? data : data.id,
+      },
+    });
   }
 }

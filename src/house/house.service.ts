@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { House } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 
@@ -36,6 +36,9 @@ export class HouseService {
   }
 
   async remove(data: string | House) {
+    if (!data) {
+      throw new BadRequestException('Group ID is required');
+    }
     return await this.prismaService.house.delete({
       where: {
         id: typeof data === 'string' ? data : data.id,

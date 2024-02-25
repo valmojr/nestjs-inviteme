@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Role } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 
@@ -6,6 +6,9 @@ import { PrismaService } from '../prisma/prisma.service';
 export class RoleService {
   constructor(private readonly prismaService: PrismaService) {}
   async create(data: Role) {
+    if (!data) {
+      throw new BadRequestException('Role ID is required');
+    }
     return await this.prismaService.role.create({
       data: {
         ...data,
@@ -17,15 +20,18 @@ export class RoleService {
     return await this.prismaService.role.findMany();
   }
 
-  async findOne(idOrRole: string | Role) {
+  async findOne(data: string | Role) {
     return await this.prismaService.role.findUnique({
       where: {
-        id: typeof idOrRole === 'string' ? idOrRole : idOrRole.id,
+        id: typeof data === 'string' ? data : data.id,
       },
     });
   }
 
   async update(data: Role) {
+    if (!data) {
+      throw new BadRequestException('Role ID is required');
+    }
     return await this.prismaService.role.update({
       where: {
         id: data.id,
@@ -34,10 +40,13 @@ export class RoleService {
     });
   }
 
-  async remove(idOrRole: string | Role) {
+  async remove(data: string | Role) {
+    if (!data) {
+      throw new BadRequestException('Role ID is required');
+    }
     return await this.prismaService.role.delete({
       where: {
-        id: typeof idOrRole === 'string' ? idOrRole : idOrRole.id,
+        id: typeof data === 'string' ? data : data.id,
       },
     });
   }
