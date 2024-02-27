@@ -10,18 +10,19 @@ datasource db {
 
 model User {
   id          String   @id @unique @default(cuid())
-  discordId   String?  @unique
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  username    String   @unique
-  displayName String?
-  password    String?
   avatar      String?
   email       String?  @unique
+  password    String?
   bannerColor String?
-  roles       Role[]
+  displayName String?
+  username    String   @unique
+  discordId   String?  @unique
   ownedEvents Event[]  @relation("UserToOwnedEvents")
-  houses      House[]
+  roles       Role[]
+  groups      Group[]  @relation("GroupToUser")
+  houses      House[]  @relation("HouseToUser")
   events      Event[]  @relation("UserToAttendedEvents")
 }
 
@@ -31,9 +32,9 @@ model Role {
   updatedAt DateTime @updatedAt
   name      String
   userId    String?
-  user      User?    @relation(fields: [userId], references: [id])
   groupID   String?
   group     Group?   @relation(fields: [groupID], references: [id])
+  user      User?    @relation(fields: [userId], references: [id])
 }
 
 model Group {
@@ -42,32 +43,33 @@ model Group {
   updatedAt            DateTime @updatedAt
   name                 String
   roleIDs              String[]
-  roles                Role[]
-  childGroups          Group[]  @relation("GroupToFatherGroup")
   fatherGroupID        String?
-  fatherGroup          Group?   @relation("GroupToFatherGroup", fields: [fatherGroupID], references: [id])
-  isFatherGroupOfEvent Event?   @relation("fatherGroupToEvent")
   eventID              String
+  isFatherGroupOfEvent Event?   @relation("fatherGroupToEvent")
   event                Event    @relation("GroupsToEvent", fields: [eventID], references: [id])
+  fatherGroup          Group?   @relation("GroupToFatherGroup", fields: [fatherGroupID], references: [id])
+  childGroups          Group[]  @relation("GroupToFatherGroup")
+  roles                Role[]
+  users                User[]   @relation("GroupToUser")
 }
 
 model Event {
   id          String    @id @unique @default(cuid())
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  startDate   DateTime
-  endDate     DateTime?
   name        String
-  thumbnail   String?
   mainGroupID String?   @unique
-  mainGroup   Group?    @relation("fatherGroupToEvent", fields: [mainGroupID], references: [id])
-  ownerID     String
-  owner       User      @relation("UserToOwnedEvents", fields: [ownerID], references: [id])
   location    String?
   description String?
-  House       House[]
-  users       User[]    @relation("UserToAttendedEvents")
+  endDate     DateTime?
+  ownerID     String
+  startDate   DateTime
+  thumbnail   String?
+  mainGroup   Group?    @relation("fatherGroupToEvent", fields: [mainGroupID], references: [id])
+  owner       User      @relation("UserToOwnedEvents", fields: [ownerID], references: [id])
   groups      Group[]   @relation("GroupsToEvent")
+  House       House[]   @relation("EventToHouse")
+  users       User[]    @relation("UserToAttendedEvents")
 }
 
 model House {
@@ -76,6 +78,6 @@ model House {
   updatedAt DateTime @updatedAt
   name      String
   avatar    String?
-  users     User[]
-  events    Event[]
+  events    Event[]  @relation("EventToHouse")
+  users     User[]   @relation("HouseToUser")
 }
