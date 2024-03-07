@@ -30,6 +30,11 @@ export class UserController {
     return this.userService.findAll();
   }
 
+  @Get('partial/:username')
+  findPartial(@Param('username') username: string) {
+    return this.userService.findPartial(username);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.userService.findOne(id);
