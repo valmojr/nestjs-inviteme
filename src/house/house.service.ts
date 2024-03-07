@@ -14,8 +14,20 @@ export class HouseService {
     });
   }
 
-  async findAll() {
-    return await this.prismaService.house.findMany();
+  async findAll(userId: string) {
+    return await this.prismaService.house.findMany({
+      where: { users: { some: { id: userId } } },
+    });
+  }
+
+  async findPartial(name: string) {
+    return await this.prismaService.house.findMany({
+      where: {
+        name: {
+          contains: name,
+        },
+      },
+    });
   }
 
   async findOne(idOrHouse: string | House) {
