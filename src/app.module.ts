@@ -7,6 +7,7 @@ import { UserModule } from './user/user.module';
 import { RoleModule } from './role/role.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
+import { DiscordModule } from './discord/discord.module';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { JwtModule } from '@nestjs/jwt';
     JwtModule.register({
       global: true,
       secret: process.env.AUTH_SECRET,
-      signOptions: { expiresIn: '1d' },
+      signOptions: { expiresIn: '7 days' },
     }),
     EventModule,
     GroupModule,
@@ -24,6 +25,7 @@ import { JwtModule } from '@nestjs/jwt';
     UserModule,
     RoleModule,
     AuthModule,
+    DiscordModule,
   ],
 })
 export class AppModule {}
