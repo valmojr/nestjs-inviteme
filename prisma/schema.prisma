@@ -65,6 +65,7 @@ model Event {
   ownerID     String
   startDate   DateTime
   thumbnail   String?
+  public      Boolean
   mainGroup   Group?    @relation("fatherGroupToEvent", fields: [mainGroupID], references: [id])
   owner       User      @relation("UserToOwnedEvents", fields: [ownerID], references: [id])
   groups      Group[]   @relation("GroupsToEvent")
@@ -78,6 +79,7 @@ model House {
   updatedAt DateTime @updatedAt
   name      String
   avatar    String?
+  public    Boolean
   events    Event[]  @relation("EventToHouse")
   users     User[]   @relation("HouseToUser")
 }
