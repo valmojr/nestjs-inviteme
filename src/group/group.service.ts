@@ -16,8 +16,10 @@ export class GroupService {
     });
   }
 
-  async findAll() {
-    return await this.prismaService.group.findMany();
+  async findAll(userId: string) {
+    return await this.prismaService.group.findMany({
+      where: { users: { some: { id: userId } } },
+    });
   }
 
   async findOne(idOrGroup: string | Group) {

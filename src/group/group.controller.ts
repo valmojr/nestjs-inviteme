@@ -7,15 +7,22 @@ import {
   Param,
   Delete,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { GroupService } from './group.service';
 import { Group } from '@prisma/client';
 import { AuthGuard } from '../auth/auth.guard';
+import UserParser from 'src/util/UserParser';
+import { JwtService } from '@nestjs/jwt';
+import { Request } from 'express';
 
 @UseGuards(AuthGuard)
 @Controller('group')
 export class GroupController {
-  constructor(private readonly groupService: GroupService) {}
+  constructor(
+    private readonly groupService: GroupService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   @Post()
   create(@Body() createGroupDto: Group) {
@@ -23,8 +30,12 @@ export class GroupController {
   }
 
   @Get()
-  findAll() {
-    return this.groupService.findAll();
+  findAll(@Req() req: Request) {
+    const user = UserParser(
+      req.headers.authorization.split(' ')[1],
+      this.jwtService,
+    );
+    return this.groupService.findAll(user.id);
   }
 
   @Get(':id')
