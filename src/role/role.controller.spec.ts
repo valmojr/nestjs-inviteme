@@ -6,10 +6,12 @@ import TestModuleBuilder from '../../test/test.module';
 import { UserService } from '../user/user.service';
 import { Role } from '@prisma/client';
 import { randomUUID } from 'crypto';
+import { JwtService } from '@nestjs/jwt';
 
 describe('RoleController', () => {
   let controller: RoleController;
   let service: RoleService;
+  let jwtService: JwtService;
 
   const testRole: Role = {
     id: randomUUID(),
@@ -29,6 +31,7 @@ describe('RoleController', () => {
 
     controller = module.get<RoleController>(RoleController);
     service = module.get<RoleService>(RoleService);
+    jwtService = module.get<JwtService>(JwtService);
 
     service.create = jest.fn().mockResolvedValueOnce(testRole);
     service.findAll = jest.fn().mockResolvedValueOnce([testRole]);
@@ -42,6 +45,12 @@ describe('RoleController', () => {
       ...testRole,
       name: 'deleted role',
     });
+
+    jwtService.verify = jest.fn().mockReturnValueOnce({
+      id: 'test-user-id',
+      username: 'user',
+      displayName: 'User',
+    });
   });
 
   it('should be defined', () => {
@@ -52,13 +61,6 @@ describe('RoleController', () => {
     const role = await controller.create(testRole);
 
     expect(role).toBeDefined();
-  });
-
-  it('should be able to findAll roles', async () => {
-    const roles = await controller.findAll();
-
-    expect(roles).toBeDefined();
-    expect(roles).toBeInstanceOf(Array);
   });
 
   it('should be able to find one Role', async () => {

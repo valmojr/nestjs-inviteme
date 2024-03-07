@@ -6,13 +6,20 @@ import {
   Patch,
   Param,
   Delete,
+  Req,
 } from '@nestjs/common';
 import { RoleService } from './role.service';
 import { Role } from '@prisma/client';
+import { Request } from 'express';
+import UserParser from 'src/util/UserParser';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('role')
 export class RoleController {
-  constructor(private readonly roleService: RoleService) {}
+  constructor(
+    private readonly roleService: RoleService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   @Post()
   create(@Body() data: Role) {
@@ -20,8 +27,12 @@ export class RoleController {
   }
 
   @Get()
-  findAll() {
-    return this.roleService.findAll();
+  findAll(@Req() req: Request) {
+    const user = UserParser(
+      req.headers.authorization.split(' ')[1],
+      this.jwtService,
+    );
+    return this.roleService.findAll(user.id);
   }
 
   @Get(':id')

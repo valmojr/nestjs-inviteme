@@ -16,8 +16,10 @@ export class RoleService {
     });
   }
 
-  async findAll() {
-    return await this.prismaService.role.findMany();
+  async findAll(userId: string) {
+    return await this.prismaService.role.findMany({
+      where: { user: { id: userId } },
+    });
   }
 
   async findOne(data: string | Role) {
