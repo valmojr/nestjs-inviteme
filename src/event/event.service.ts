@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Event } from '@prisma/client';
+import { Event, House } from '@prisma/client';
 import { randomUUID } from 'crypto';
 import { CreateEventDTO } from './event.type';
 
@@ -63,8 +63,27 @@ export class EventService {
     });
   }
 
-  async findAll() {
-    return await this.prismaService.event.findMany();
+  async findAll(id: string) {
+    return await this.prismaService.event.findMany({
+      where: {
+        users: { some: { id } },
+      },
+    });
+  }
+
+  async findByHouse(houseOrHouseId: House | string) {
+    return await this.prismaService.event.findMany({
+      where: {
+        House: {
+          some: {
+            id:
+              typeof houseOrHouseId === 'string'
+                ? houseOrHouseId
+                : houseOrHouseId.id,
+          },
+        },
+      },
+    });
   }
 
   async findOne(idOrEvent: string | Event) {

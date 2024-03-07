@@ -7,15 +7,24 @@ import {
   Param,
   Delete,
   UseGuards,
+  Logger,
+  Req,
 } from '@nestjs/common';
 import { EventService } from './event.service';
-import { Event } from '@prisma/client';
+import { Event, House, User } from '@prisma/client';
 import { AuthGuard } from '../auth/auth.guard';
+import { JwtService } from '@nestjs/jwt';
+import { Request } from 'express';
 
 @UseGuards(AuthGuard)
 @Controller('event')
 export class EventController {
-  constructor(private readonly eventService: EventService) {}
+  constructor(
+    private readonly eventService: EventService,
+    private readonly jwtService: JwtService,
+  ) {}
+
+  private readonly logger = new Logger(EventController.name);
 
   @Post()
   create(@Body() createEventDto: Event) {
@@ -23,8 +32,22 @@ export class EventController {
   }
 
   @Get()
-  findAll() {
-    return this.eventService.findAll();
+  findAll(@Req() req: Request) {
+    const user = this.jwtService.verify(
+      req.headers.authorization.split(' ')[1],
+    ) as User;
+
+    return this.eventService.findAll(user.id);
+  }
+
+  @Get('house/:id')
+  findByHouse(@Param('id') id: string) {
+    return this.eventService.findByHouse(id);
+  }
+
+  @Get('house')
+  findByUser(@Body() house: House) {
+    return this.eventService.findByHouse(house);
   }
 
   @Get(':id')
