@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Get,
   Req,
+  Param,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Request } from 'express';
@@ -26,5 +27,10 @@ export class AuthController {
   async me(@Req() req: Request) {
     const token = req.headers.authorization.split(' ')[1];
     return await this.authService.getMe(token);
+  }
+
+  @Post('discord/:code')
+  async discordLogin(@Param('code') code: string) {
+    return await this.authService.discordOAuthCallback(code);
   }
 }
