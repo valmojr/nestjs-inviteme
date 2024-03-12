@@ -38,6 +38,17 @@ export class HouseService {
     });
   }
 
+  async findUsers(idOrHouse: string | House) {
+    return await this.prismaService.house.findUnique({
+      where: {
+        id: typeof idOrHouse === 'string' ? idOrHouse : idOrHouse.id,
+      },
+      select: {
+        users: true,
+      },
+    });
+  }
+
   async update(data: House) {
     return await this.prismaService.house.update({
       where: {

@@ -48,6 +48,11 @@ export class HouseController {
     return this.houseService.findOne(id);
   }
 
+  @Get('users/:id')
+  findUsers(@Param('id') id: string) {
+    return this.houseService.findUsers(id);
+  }
+
   @Patch(':id')
   updateById(@Param('id') id: string, @Body() data: House) {
     return this.houseService.update({ ...data, id });
