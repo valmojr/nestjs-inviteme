@@ -22,15 +22,15 @@ export async function DiscordUserParser(
   const userOnDatabase = await userService.findByDiscordId(discordUser.id);
 
   return await userService.upsertByDiscord({
-    id: userOnDatabase.id || randomUUID(),
-    createdAt: userOnDatabase.createdAt || new Date(),
+    id: userOnDatabase?.id || randomUUID(),
+    createdAt: userOnDatabase?.createdAt || new Date(),
     updatedAt: new Date(),
     discordId: discordUser.id,
     username: discordUser.username,
     displayName: discordUser.displayName,
     bannerColor: discordUser.banner,
     avatar: discordUser.avatar,
-    email: userOnDatabase.email || null,
-    password: userOnDatabase.password || null,
+    email: userOnDatabase?.email || null,
+    password: userOnDatabase?.password || null,
   });
 }
