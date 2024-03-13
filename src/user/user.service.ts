@@ -68,6 +68,17 @@ export class UserService {
     });
   }
 
+  async findByDiscordId(discordId: string) {
+    if (!discordId) {
+      throw new BadRequestException('Discord ID is required');
+    }
+    return await this.prismaService.user.findUnique({
+      where: {
+        discordId: discordId,
+      },
+    });
+  }
+
   async update(data: User) {
     if (!data) {
       throw new BadRequestException('Role ID is required');
@@ -77,6 +88,22 @@ export class UserService {
         id: data.id,
       },
       data: { updatedAt: new Date(), ...data },
+    });
+  }
+
+  async upsert(data: User) {
+    return await this.prismaService.user.upsert({
+      where: { id: data.id },
+      update: { ...data, updatedAt: new Date() },
+      create: data,
+    });
+  }
+
+  async upsertByDiscord(data: User) {
+    return await this.prismaService.user.upsert({
+      where: { discordId: data.discordId },
+      update: { ...data, updatedAt: new Date() },
+      create: data,
     });
   }
 

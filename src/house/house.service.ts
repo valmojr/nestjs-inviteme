@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { House } from '@prisma/client';
+import { House, User } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -38,6 +38,14 @@ export class HouseService {
     });
   }
 
+  async findByDiscordId(discordId: string) {
+    return await this.prismaService.house.findUnique({
+      where: {
+        discordId: discordId,
+      },
+    });
+  }
+
   async findUsers(idOrHouse: string | House) {
     return await this.prismaService.house.findUnique({
       where: {
@@ -46,6 +54,26 @@ export class HouseService {
       select: {
         users: true,
       },
+    });
+  }
+
+  async upsert(data: House) {
+    return await this.prismaService.house.upsert({
+      where: {
+        id: data.id,
+      },
+      update: { ...data, updatedAt: new Date() },
+      create: { ...data },
+    });
+  }
+
+  async upsertByDiscord(data: House) {
+    return await this.prismaService.house.upsert({
+      where: {
+        discordId: data.discordId,
+      },
+      update: { ...data, updatedAt: new Date() },
+      create: { ...data },
     });
   }
 
@@ -60,11 +88,57 @@ export class HouseService {
 
   async remove(data: string | House) {
     if (!data) {
-      throw new BadRequestException('Group ID is required');
+      throw new BadRequestException('House info is required');
     }
     return await this.prismaService.house.delete({
       where: {
         id: typeof data === 'string' ? data : data.id,
+      },
+    });
+  }
+
+  async removeByDiscordId(discordId: string) {
+    return await this.prismaService.house.delete({
+      where: {
+        discordId: discordId,
+      },
+    });
+  }
+
+  async addUser(userOrUserId: User | string, houseDiscordId: string) {
+    return await this.prismaService.house.update({
+      where: {
+        discordId: houseDiscordId,
+      },
+      data: {
+        users: {
+          connect: {
+            id:
+              typeof userOrUserId === 'string' ? userOrUserId : userOrUserId.id,
+          },
+        },
+      },
+    });
+  }
+
+  async removeUser(
+    userOrUserId: User | string,
+    houseOrHouseId: House | string,
+  ) {
+    return await this.prismaService.house.update({
+      where: {
+        id:
+          typeof houseOrHouseId === 'string'
+            ? houseOrHouseId
+            : houseOrHouseId.id,
+      },
+      data: {
+        users: {
+          disconnect: {
+            id:
+              typeof userOrUserId === 'string' ? userOrUserId : userOrUserId.id,
+          },
+        },
       },
     });
   }

@@ -12,6 +12,10 @@ export class DiscordConfigService {
         IntentsBitField.Flags.GuildMessages,
         IntentsBitField.Flags.GuildMessageReactions,
         IntentsBitField.Flags.DirectMessages,
+        IntentsBitField.Flags.GuildMembers,
+        IntentsBitField.Flags.GuildScheduledEvents,
+        IntentsBitField.Flags.MessageContent,
+        IntentsBitField.Flags.GuildModeration,
       ],
     };
   }
