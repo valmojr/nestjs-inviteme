@@ -3,7 +3,7 @@ import { DiscordService } from './discord.service';
 import { DiscordController } from './discord.controller';
 import { NecordModule } from 'necord';
 import { DiscordConfigService } from './discord.config.service';
-import { DiscordUpdate } from './discord.update';
+import { DiscordUpdate } from './discord.update.service';
 import { HouseService } from 'src/house/house.service';
 import { UserService } from 'src/user/user.service';
 import { PrismaService } from 'src/prisma/prisma.service';
