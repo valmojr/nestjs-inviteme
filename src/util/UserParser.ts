@@ -16,7 +16,7 @@ export default function UserParser(token: string, jwtService: JwtService) {
 }
 
 export async function DiscordUserParser(
-  discordUser: DiscordUser,
+  discordUser: DiscordUser & { banner_color?: string },
   userService: UserService,
 ): Promise<User> {
   const userOnDatabase = await userService.findByDiscordId(discordUser.id);
@@ -28,7 +28,7 @@ export async function DiscordUserParser(
     discordId: discordUser.id,
     username: discordUser.username,
     displayName: discordUser.displayName,
-    bannerColor: discordUser.banner,
+    bannerColor: discordUser?.banner_color,
     avatar: discordUser.avatar,
     email: userOnDatabase?.email || null,
     password: userOnDatabase?.password || null,

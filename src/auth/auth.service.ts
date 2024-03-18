@@ -1,6 +1,10 @@
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
+import { User as DiscordUser } from 'discord.js';
+import { DiscordAccessToken } from 'src/util/AccessToken';
+import { Response } from 'express';
+import { DiscordUserParser } from 'src/util/UserParser';
 
 @Injectable()
 export class AuthService {
@@ -35,32 +39,31 @@ export class AuthService {
     }
   }
 
-  async discordOAuthCallback(code: string) {
-    let token: {
-      access_token: string;
-      token_type: string;
-      expires_in: number;
-      refresh_token: string;
-      scope: string;
-    };
+  async discordOAuthCallback(code: string, response: Response) {
+    let token: DiscordAccessToken;
+    let user: DiscordUser;
+
+    const api_url = 'https://discord.com/api/oauth2/token';
+    const body = new URLSearchParams();
+    body.append('client_id', process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID || '');
+    body.append('client_secret', process.env.DISCORD_CLIENT_SECRET || '');
+    body.append('grant_type', 'authorization_code');
+    body.append('code', code);
+    body.append(
+      'redirect_uri',
+      process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URI || '',
+    );
+    const headers = new Headers();
+    headers.append('Content-Type', 'application/x-www-form-urlencoded');
 
     try {
-      const response = await fetch('https://discord.com/api/oauth2/token', {
+      const response = await fetch(api_url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: JSON.stringify({
-          client_id: process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID,
-          client_secret: process.env.DISCORD_CLIENT_SECRET,
-          grant_type: 'authorization_code',
-          code,
-          redirect_uri: process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URI,
-        }),
+        headers,
+        body,
       });
-      this.logger.log('response', JSON.stringify(response));
 
-      token = await response.json();
+      token = (await response.json()) as DiscordAccessToken;
     } catch (error) {
       throw new Error(`Failed to get access token: ${error}`);
     }
@@ -73,12 +76,22 @@ export class AuthService {
         },
       });
 
-      const user = await response.json();
-      this.logger.log('user', user);
-
-      return user;
+      user = (await response.json()) as DiscordUser;
     } catch (error) {
       throw new Error(`Failed to get user: ${error}`);
     }
+
+    const userOnDatabase = await DiscordUserParser(user, this.userService);
+    const jwtToken = this.jwtService.sign({ user });
+
+    response.cookie('token', jwtToken, {
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+    });
+
+    response.status(200).json({ user: userOnDatabase });
+
+    return jwtToken;
   }
 }

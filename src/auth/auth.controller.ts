@@ -7,9 +7,10 @@ import {
   Get,
   Req,
   Param,
+  Res,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -30,7 +31,10 @@ export class AuthController {
   }
 
   @Post('discord/:code')
-  async discordLogin(@Param('code') code: string) {
-    return await this.authService.discordOAuthCallback(code);
+  async discordLogin(
+    @Param('code') code: string,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return await this.authService.discordOAuthCallback(code, res);
   }
 }
