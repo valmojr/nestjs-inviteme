@@ -29,7 +29,13 @@
     "prisma:push:dev": "dotenv -e .env.dev -- npx prisma db push",
     "prisma:pull:dev": "dotenv -e .env.dev -- npx prisma db pull",
     "prisma:generate:dev": "dotenv -e .env.dev -- npx prisma generate",
-    "prisma:studio:dev": "dotenv -e .env.dev -- npx prisma studio"
+    "prisma:studio:dev": "dotenv -e .env.dev -- npx prisma studio",
+    "prisma:migrate_deploy:prod": "dotenv -e .env.prod -- npx prisma migrate deploy",
+    "prisma:migrate_dev:prod": "dotenv -e .env.prod -- npx prisma migrate dev",
+    "prisma:push:prod": "dotenv -e .env.prod -- npx prisma db push",
+    "prisma:pull:prod": "dotenv -e .env.prod -- npx prisma db pull",
+    "prisma:generate:prod": "dotenv -e .env.prod -- npx prisma generate",
+    "prisma:studio:prod": "dotenv -e .env.prod -- npx prisma studio"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
