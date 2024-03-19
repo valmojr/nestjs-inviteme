@@ -1,4 +1,9 @@
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { User as DiscordUser } from 'discord.js';
@@ -65,7 +70,7 @@ export class AuthService {
 
       token = (await response.json()) as DiscordAccessToken;
     } catch (error) {
-      throw new Error(`Failed to get access token: ${error}`);
+      throw new BadRequestException(`Failed to get access token: ${error}`);
     }
     try {
       const response = await fetch('https://discord.com/api/users/@me', {
@@ -78,7 +83,7 @@ export class AuthService {
       this.logger.log('user provided ->', user);
       user = (await response.json()) as DiscordUser;
     } catch (error) {
-      throw new Error(`Failed to get user: ${error}`);
+      throw new BadRequestException(`Failed to get user: ${error}`);
     }
 
     const userOnDatabase = await DiscordUserParser(user, this.userService);
