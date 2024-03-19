@@ -88,12 +88,14 @@ export class AuthService {
     const userOnDatabase = await DiscordUserParser(user, this.userService);
     const jwtToken = this.jwtService.sign({ user });
 
-    response.cookie('token', jwtToken, {
-      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-    });
-
-    response.status(200).json({ user: userOnDatabase }).send();
+    return response
+      .cookie('token', jwtToken, {
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+      })
+      .status(200)
+      .json({ user: userOnDatabase })
+      .send();
   }
 }
