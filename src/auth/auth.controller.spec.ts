@@ -90,4 +90,9 @@ describe('AuthController', () => {
       expect(result).toEqual(false);
     });
   });
+  describe('Discord OAuth2 Route tests', () => {
+    it('should not return a user if the discord provided info is not valid', async () => {});
+    it('should return a user if the discord provided info is valid', async () => {});
+    it("should return a updated user if the user's info already exists on the user table", async () => {});
+  });
 });

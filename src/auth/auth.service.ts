@@ -4,7 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { User as DiscordUser } from 'discord.js';
 import { DiscordAccessToken } from 'src/util/AccessToken';
 import { Response } from 'express';
-import { DiscordUserParser } from 'src/util/UserParser';
+import { DiscordUserParser } from '../util/UserParser';
 
 @Injectable()
 export class AuthService {
@@ -75,7 +75,7 @@ export class AuthService {
           Authorization: `Bearer ${token.access_token}`,
         },
       });
-
+      this.logger.log('user provided ->', user);
       user = (await response.json()) as DiscordUser;
     } catch (error) {
       throw new Error(`Failed to get user: ${error}`);
