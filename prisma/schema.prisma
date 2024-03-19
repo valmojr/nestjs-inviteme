@@ -34,9 +34,9 @@ model Role {
   userId    String?
   groupID   String?
   eventID   String?
+  event     Event?   @relation(fields: [eventID], references: [id])
   group     Group?   @relation(fields: [groupID], references: [id])
   user      User?    @relation(fields: [userId], references: [id])
-  event     Event?   @relation(fields: [eventID], references: [id])
 }
 
 model Group {
@@ -71,19 +71,19 @@ model Event {
   mainGroup   Group?    @relation("fatherGroupToEvent", fields: [mainGroupID], references: [id])
   owner       User      @relation("UserToOwnedEvents", fields: [ownerID], references: [id])
   groups      Group[]   @relation("GroupsToEvent")
+  Role        Role[]
   House       House[]   @relation("EventToHouse")
   users       User[]    @relation("UserToAttendedEvents")
-  Role        Role[]
 }
 
 model House {
   id        String   @id @unique @default(cuid())
-  discordId String?  @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   name      String
   avatar    String?
   public    Boolean
+  discordId String?  @unique
   events    Event[]  @relation("EventToHouse")
   users     User[]   @relation("HouseToUser")
 }
