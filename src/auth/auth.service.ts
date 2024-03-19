@@ -80,7 +80,6 @@ export class AuthService {
           Authorization: `Bearer ${token.access_token}`,
         },
       });
-      this.logger.log('user provided ->', user);
       user = (await response.json()) as DiscordUser;
     } catch (error) {
       throw new BadRequestException(`Failed to get user: ${error}`);
@@ -95,8 +94,6 @@ export class AuthService {
       secure: process.env.NODE_ENV === 'production',
     });
 
-    response.status(200).json({ user: userOnDatabase });
-
-    return jwtToken;
+    response.status(200).json({ user: userOnDatabase }).send();
   }
 }
