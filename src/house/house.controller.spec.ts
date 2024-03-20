@@ -6,6 +6,7 @@ import TestModuleBuilder from '../../test/test.module';
 import { UserService } from '../user/user.service';
 import { House } from '@prisma/client';
 import { randomUUID } from 'crypto';
+import { Request } from 'express';
 
 describe('HouseController', () => {
   let controller: HouseController;
@@ -13,10 +14,12 @@ describe('HouseController', () => {
 
   const testHouse: House = {
     id: randomUUID(),
+    discordId: null,
     updatedAt: new Date(),
     createdAt: new Date(),
     name: 'Test House',
     avatar: null,
+    public: false,
   };
 
   beforeEach(async () => {
@@ -55,7 +58,10 @@ describe('HouseController', () => {
   });
 
   it('should be able to find all houses', async () => {
-    const houses = await controller.findAll();
+    let request: Request;
+    request.headers.authorization = 'test';
+
+    const houses = await controller.findAll(request);
 
     expect(houses).toBeDefined();
     expect(houses).toBeInstanceOf(Array);

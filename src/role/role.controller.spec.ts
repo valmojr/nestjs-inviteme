@@ -18,6 +18,7 @@ describe('RoleController', () => {
     createdAt: new Date(),
     updatedAt: new Date(),
     name: 'test',
+    eventID: null,
     userId: null,
     groupID: null,
   };

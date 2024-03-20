@@ -11,7 +11,7 @@ import {
 import { RoleService } from './role.service';
 import { Role } from '@prisma/client';
 import { Request } from 'express';
-import UserParser from 'src/util/UserParser';
+import UserParser from '../util/UserParser';
 import { JwtService } from '@nestjs/jwt';
 
 @Controller('role')

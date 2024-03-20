@@ -14,7 +14,7 @@ import { House } from '@prisma/client';
 import { AuthGuard } from '../auth/auth.guard';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import UserParser from 'src/util/UserParser';
+import UserParser from '../util/UserParser';
 
 @UseGuards(AuthGuard)
 @Controller('house')

@@ -11,10 +11,12 @@ describe('HouseService', () => {
 
   const testHouse: House = {
     id: randomUUID(),
+    discordId: null,
     createdAt: new Date(),
     updatedAt: new Date(),
     name: 'Test House',
     avatar: null,
+    public: false,
   };
 
   beforeEach(async () => {
@@ -52,7 +54,7 @@ describe('HouseService', () => {
   });
 
   it('should find all houses', async () => {
-    const houses = await service.findAll();
+    const houses = await service.findAll('123');
 
     expect(houses).toBeInstanceOf(Array);
   });

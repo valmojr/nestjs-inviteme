@@ -6,6 +6,7 @@ import TestModuleBuilder from '../../test/test.module';
 import { UserService } from '../user/user.service';
 import { Event } from '@prisma/client';
 import { randomUUID } from 'crypto';
+import { Request } from 'express';
 
 describe('EventController', () => {
   let controller: EventController;
@@ -23,6 +24,7 @@ describe('EventController', () => {
     ownerID: null,
     location: null,
     description: null,
+    public: false,
   };
 
   beforeEach(async () => {
@@ -61,7 +63,10 @@ describe('EventController', () => {
   });
 
   it('should be able to find all events', async () => {
-    const events = await controller.findAll();
+    let request: Request;
+    request.headers.request = 'test';
+
+    const events = await controller.findAll(request);
 
     expect(events).toEqual([testEvent]);
   });

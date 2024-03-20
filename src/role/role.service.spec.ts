@@ -14,6 +14,7 @@ describe('RoleService', () => {
     createdAt: new Date(),
     updatedAt: new Date(),
     name: 'Test Role',
+    eventID: null,
     userId: null,
     groupID: null,
   };
@@ -53,7 +54,7 @@ describe('RoleService', () => {
   });
 
   it('should find all roles', async () => {
-    const roles = await service.findAll();
+    const roles = await service.findAll('123');
 
     expect(roles).toBeInstanceOf(Array);
   });

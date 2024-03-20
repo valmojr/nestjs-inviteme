@@ -12,7 +12,7 @@ import {
 import { GroupService } from './group.service';
 import { Group } from '@prisma/client';
 import { AuthGuard } from '../auth/auth.guard';
-import UserParser from 'src/util/UserParser';
+import UserParser from '../util/UserParser';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 

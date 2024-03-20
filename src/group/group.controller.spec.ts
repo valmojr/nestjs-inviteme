@@ -6,6 +6,7 @@ import TestModuleBuilder from '../../test/test.module';
 import { UserService } from '../user/user.service';
 import { Group } from '@prisma/client';
 import { randomUUID } from 'crypto';
+import { Request } from 'express';
 
 describe('GroupController', () => {
   let controller: GroupController;
@@ -57,10 +58,16 @@ describe('GroupController', () => {
   });
 
   it('should be able to find all groups', async () => {
-    const groups = await controller.findAll();
+    let request: Request;
+    request.headers = { authorization: 'test' };
+
+    const groups = await controller.findAll(request);
 
     expect(groups).toBeDefined();
     expect(groups).toBeInstanceOf(Array);
+    expect(
+      service.findAll,
+    ).toHaveBeenCalledWith(/* Provide the expected user ID */);
   });
 
   it('should be able to find one group', async () => {

@@ -54,7 +54,7 @@ describe('GroupService', () => {
   });
 
   it('should find all groups', async () => {
-    const groups = await service.findAll();
+    const groups = await service.findAll('123');
 
     expect(groups).toBeInstanceOf(Array);
   });

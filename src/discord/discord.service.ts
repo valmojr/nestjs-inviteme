@@ -8,13 +8,13 @@ import {
   User as DiscordUser,
   GuildScheduledEvent,
 } from 'discord.js';
-import { EventService } from 'src/event/event.service';
-import { GroupService } from 'src/group/group.service';
-import { HouseService } from 'src/house/house.service';
-import { RoleService } from 'src/role/role.service';
-import { UserService } from 'src/user/user.service';
-import GuildParser from 'src/util/GuildParser';
-import { DiscordUserParser } from 'src/util/UserParser';
+import { EventService } from '../event/event.service';
+import { GroupService } from '../group/group.service';
+import { HouseService } from '../house/house.service';
+import { RoleService } from '../role/role.service';
+import { UserService } from '../user/user.service';
+import GuildParser from '../util/GuildParser';
+import { DiscordUserParser } from '../util/UserParser';
 
 @Injectable()
 export class DiscordService {

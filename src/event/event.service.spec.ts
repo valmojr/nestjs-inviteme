@@ -3,13 +3,17 @@ import { EventService } from './event.service';
 import { PrismaService } from '../prisma/prisma.service';
 import TestModuleBuilder from '../../test/test.module';
 import { randomUUID } from 'crypto';
+import { Event } from '@prisma/client';
 
 describe('EventService', () => {
   let service: EventService;
   let prisma: PrismaService;
 
-  const testEvent = {
-    name: 'name',
+  const testEvent: Event = {
+    id: randomUUID(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    name: 'Test Event',
     startDate: new Date('2025-03-10'),
     endDate: new Date('2025-03-11'),
     thumbnail: 'thumbnail',
@@ -17,6 +21,7 @@ describe('EventService', () => {
     location: 'location',
     mainGroupID: null,
     ownerID: null,
+    public: false,
   };
 
   beforeEach(async () => {
@@ -53,6 +58,7 @@ describe('EventService', () => {
         ...testEvent,
         name: null,
         startDate: null,
+        public: false,
       });
 
       expect(newEvent).toThrowErrorMatchingInlineSnapshot(
@@ -70,6 +76,7 @@ describe('EventService', () => {
       const newEvent = await service.create({
         ...testEvent,
         startDate: new Date('invalid date'),
+        public: false,
       });
 
       expect(newEvent).toThrowErrorMatchingInlineSnapshot(
@@ -87,6 +94,7 @@ describe('EventService', () => {
       const newEvent = await service.create({
         ...testEvent,
         startDate: new Date('2020-01-01'),
+        public: false,
       });
 
       expect(newEvent).toThrowErrorMatchingInlineSnapshot(
@@ -105,6 +113,7 @@ describe('EventService', () => {
         ...testEvent,
         startDate: new Date('2022-01-01'),
         endDate: new Date('2021-01-01'),
+        public: false,
       });
 
       expect(newEvent).toThrowErrorMatchingInlineSnapshot(
@@ -141,6 +150,7 @@ describe('EventService', () => {
       id: randomUUID(),
       createdAt: new Date(),
       updatedAt: new Date(),
+      public: false,
     });
 
     expect(upsertedEvent).toBeDefined();
@@ -162,7 +172,7 @@ describe('EventService', () => {
       },
     ]);
 
-    const allEvents = await service.findAll();
+    const allEvents = await service.findAll('123');
 
     expect(allEvents).toBeDefined();
     expect(allEvents.length).toBe(1);
@@ -217,6 +227,7 @@ describe('EventService', () => {
       thumbnail: 'thumbnail',
       mainGroupID: null,
       ownerID: 'something',
+      public: false,
     });
 
     expect(oneEvent).toBeDefined();
@@ -242,6 +253,7 @@ describe('EventService', () => {
       id: randomUUID(),
       createdAt: new Date(),
       updatedAt: new Date(),
+      public: false,
     });
 
     expect(updatedEvent).toBeDefined();
@@ -297,6 +309,7 @@ describe('EventService', () => {
       thumbnail: 'thumbnail',
       mainGroupID: null,
       ownerID: 'something',
+      public: false,
     });
 
     expect(deletedEvent).toBeDefined();
