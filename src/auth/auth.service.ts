@@ -86,7 +86,7 @@ export class AuthService {
     }
 
     const userOnDatabase = await DiscordUserParser(user, this.userService);
-    const jwtToken = this.jwtService.sign({ user });
+    const jwtToken = this.jwtService.sign({ user: userOnDatabase });
 
     return response
       .cookie('token', jwtToken, {

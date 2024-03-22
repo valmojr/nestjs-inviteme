@@ -23,13 +23,13 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException('no token provided');
     }
 
-    const payload = await this.jwtService.verifyAsync<User>(token, {
+    const payload = await this.jwtService.verifyAsync<{ user: User }>(token, {
       secret: process.env.AUTH_SECRET,
     });
 
     request.user = payload;
 
-    const user = await this.userService.findOne(payload);
+    const user = await this.userService.findOne(payload?.user);
 
     if (!user) {
       throw new UnauthorizedException('user not found');

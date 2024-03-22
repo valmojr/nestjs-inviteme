@@ -27,39 +27,23 @@ export class UserService {
     return await this.prismaService.user.findMany();
   }
 
-  async findPartial(username: string) {
-    if (!username) {
-      return [];
+  async findPartial(hash: string) {
+    if (!hash) {
+      throw new BadRequestException('must have some string to search for');
     }
 
-    const foundUsernames = await this.prismaService.user.findMany({
+    const foundNames = await this.prismaService.user.findMany({
       where: {
-        username: {
-          contains: username,
-        },
+        username: hash,
       },
     });
 
-    const foundDisplayNames = await this.prismaService.user.findMany({
-      where: {
-        displayName: {
-          contains: username,
-        },
-      },
-    });
-
-    let foundUsers = [...foundDisplayNames, ...foundUsernames];
-
-    foundUsers = foundUsers.filter((value, index, self) => {
-      return self.findIndex((v) => v.id === value.id) === index;
-    });
-
-    return foundUsers;
+    return foundNames;
   }
 
   async findOne(data: string | User) {
     if (!data) {
-      throw new BadRequestException('Role ID is required');
+      throw new BadRequestException('data is required');
     }
     return await this.prismaService.user.findUnique({
       where: {
