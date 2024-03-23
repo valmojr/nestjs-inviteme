@@ -29,7 +29,7 @@ export async function DiscordUserParser(
     username: discordUser.username,
     displayName: discordUser.displayName,
     bannerColor: discordUser?.banner_color,
-    banner: discordUser.bannerURL({ extension: 'png', forceStatic: true }),
+    banner: discordUser.banner,
     avatar: discordUser.avatar,
     email: userOnDatabase?.email || null,
     password: userOnDatabase?.password || null,
