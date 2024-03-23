@@ -29,8 +29,12 @@ export async function DiscordUserParser(
     username: discordUser.username,
     displayName: discordUser.displayName,
     bannerColor: discordUser?.banner_color,
-    banner: discordUser.banner,
-    avatar: discordUser.avatar,
+    banner: discordUser.banner
+      ? `https://cdn.discordapp.com/banners/${discordUser.id}/${discordUser.banner}.png`
+      : null,
+    avatar: discordUser.avatar
+      ? `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png`
+      : null,
     email: userOnDatabase?.email || null,
     password: userOnDatabase?.password || null,
   });
