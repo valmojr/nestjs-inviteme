@@ -15,6 +15,7 @@ export default function GuildParser(guild: Guild, isPublic?: boolean): House {
     updatedAt: new Date(),
     name: guild.name,
     avatar: guild.iconURL(),
+    banner: guild.bannerURL(),
     public: isPublic,
   };
 }

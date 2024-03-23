@@ -34,7 +34,7 @@ export class UserService {
 
     const foundNames = await this.prismaService.user.findMany({
       where: {
-        username: hash,
+        username: { contains: hash },
       },
     });
 

@@ -16,6 +16,7 @@ model User {
   email       String?  @unique
   password    String?
   bannerColor String?
+  banner      String?
   displayName String?
   username    String   @unique
   discordId   String?  @unique
@@ -82,6 +83,7 @@ model House {
   updatedAt DateTime @updatedAt
   name      String
   avatar    String?
+  banner    String?
   public    Boolean
   discordId String?  @unique
   events    Event[]  @relation("EventToHouse")

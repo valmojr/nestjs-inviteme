@@ -97,6 +97,16 @@ export class EventService {
     });
   }
 
+  async findPartial(name: string) {
+    return this.prismaService.event.findMany({
+      where: {
+        name: {
+          contains: name,
+        },
+      },
+    });
+  }
+
   async update(updateEvent: Event) {
     EventChecker(updateEvent);
     return await this.prismaService.event.update({

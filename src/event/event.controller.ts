@@ -55,6 +55,11 @@ export class EventController {
     return this.eventService.findOne(id);
   }
 
+  @Get('partial/:name')
+  findPartial(@Param('name') name: string) {
+    return this.eventService.findPartial(name);
+  }
+
   @Patch(':id')
   updateById(@Param('id') id: string, @Body() updateEvent: Event) {
     return this.eventService.update({ id, ...updateEvent });
