@@ -22,7 +22,7 @@ export async function DiscordUserParser(
   const userOnDatabase = await userService.findByDiscordId(discordUser.id);
 
   return await userService.upsertByDiscord({
-    id: userOnDatabase?.id || randomUUID(),
+    id: userOnDatabase?.id || `${randomUUID()}`,
     createdAt: userOnDatabase?.createdAt || new Date(),
     updatedAt: new Date(),
     discordId: discordUser.id,
