@@ -16,10 +16,10 @@ model User {
   email       String?  @unique
   password    String?
   bannerColor String?
-  banner      String?
   displayName String?
   username    String   @unique
   discordId   String?  @unique
+  banner      String?
   ownedEvents Event[]  @relation("UserToOwnedEvents")
   roles       Role[]
   groups      Group[]  @relation("GroupToUser")
@@ -83,9 +83,9 @@ model House {
   updatedAt DateTime @updatedAt
   name      String
   avatar    String?
-  banner    String?
   public    Boolean
   discordId String?  @unique
+  banner    String?
   events    Event[]  @relation("EventToHouse")
   users     User[]   @relation("HouseToUser")
 }
