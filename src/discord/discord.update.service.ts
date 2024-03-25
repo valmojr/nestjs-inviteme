@@ -47,6 +47,7 @@ export class DiscordUpdate {
 
   @On('guildMemberRemove')
   public onUserLeftGuild(@Context() [member]: ContextOf<'guildMemberRemove'>) {
+    this.logger.log(`${member.nickname} left the guild ${member.guild.name}`);
     this.discordService.guildMemberRemove(member);
   }
 
