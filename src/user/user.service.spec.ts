@@ -20,7 +20,9 @@ describe('UserService', () => {
     avatar: null,
     email: null,
     bannerColor: null,
+    banner: null,
   };
+
   beforeEach(async () => {
     const module: TestingModule = await (
       await TestModuleBuilder({

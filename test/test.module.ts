@@ -8,7 +8,7 @@ export default async function TestModuleBuilder({
   providers,
   ...metadata
 }: ModuleMetadata) {
-  return await Test.createTestingModule({
+  return Test.createTestingModule({
     imports: [
       ConfigModule.forRoot({
         envFilePath: ['.env.local', '.env.dev'],
@@ -16,7 +16,7 @@ export default async function TestModuleBuilder({
       JwtModule.register({
         global: true,
         secret: process.env.AUTH_SECRET,
-        signOptions: { expiresIn: '1d' },
+        signOptions: { expiresIn: '7 days' },
       }),
     ],
     controllers,

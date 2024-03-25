@@ -21,6 +21,7 @@ describe('UserController', () => {
     email: null,
     password: null,
     bannerColor: null,
+    banner: null,
   };
 
   beforeEach(async () => {

@@ -17,6 +17,7 @@ describe('HouseService', () => {
     name: 'Test House',
     avatar: null,
     public: false,
+    banner: null,
   };
 
   beforeEach(async () => {

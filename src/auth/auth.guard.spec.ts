@@ -25,6 +25,7 @@ describe('Auth Guard Tests', () => {
     email: null,
     avatar: null,
     bannerColor: null,
+    banner: null,
   };
 
   const executionContext: ExecutionContext = {

@@ -20,6 +20,7 @@ describe('HouseController', () => {
     name: 'Test House',
     avatar: null,
     public: false,
+    banner: null,
   };
 
   beforeEach(async () => {
@@ -59,7 +60,7 @@ describe('HouseController', () => {
 
   it('should be able to find all houses', async () => {
     let request: Request;
-    request.headers.authorization = 'test';
+    request.headers.authorization = 'bearer test';
 
     const houses = await controller.findAll(request);
 

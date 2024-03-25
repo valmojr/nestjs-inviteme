@@ -23,6 +23,7 @@ describe('AuthController', () => {
     avatar: null,
     email: null,
     bannerColor: null,
+    banner: null,
   };
 
   beforeEach(async () => {
