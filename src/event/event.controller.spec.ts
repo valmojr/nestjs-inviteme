@@ -4,13 +4,15 @@ import { EventService } from './event.service';
 import { PrismaService } from '../prisma/prisma.service';
 import TestModuleBuilder from '../../test/test.module';
 import { UserService } from '../user/user.service';
-import { Event } from '@prisma/client';
+import { Event, User } from '@prisma/client';
 import { randomUUID } from 'crypto';
-import { Request } from 'express';
+import { JwtService } from '@nestjs/jwt';
+import { createRequest } from 'node-mocks-http';
 
 describe('EventController', () => {
   let controller: EventController;
   let service: EventService;
+  let jwtService: JwtService;
 
   const testEvent: Event = {
     id: randomUUID(),
@@ -27,6 +29,20 @@ describe('EventController', () => {
     public: false,
   };
 
+  const testUser: User = {
+    id: randomUUID(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    username: 'testUser',
+    displayName: 'testUser',
+    discordId: null,
+    banner: null,
+    bannerColor: null,
+    avatar: null,
+    email: null,
+    password: null,
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await (
       await TestModuleBuilder({
@@ -37,6 +53,7 @@ describe('EventController', () => {
 
     controller = module.get<EventController>(EventController);
     service = module.get<EventService>(EventService);
+    jwtService = module.get<JwtService>(JwtService);
 
     service.create = jest.fn().mockResolvedValueOnce(testEvent);
     service.findAll = jest.fn().mockResolvedValueOnce([testEvent]);
@@ -63,8 +80,14 @@ describe('EventController', () => {
   });
 
   it('should be able to find all events', async () => {
-    let request: Request;
-    request.headers.request = 'test';
+    jwtService.verify = jest.fn().mockResolvedValueOnce(testUser);
+
+    const request: Request = createRequest<any>({
+      method: 'GET',
+      headers: {
+        authorization: 'bearer token',
+      },
+    }) as Request;
 
     const events = await controller.findAll(request);
 

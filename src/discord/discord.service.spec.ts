@@ -11,6 +11,7 @@ import { DiscordController } from './discord.controller';
 import { DiscordUpdate } from './discord.update.service';
 import { NecordModule } from 'necord';
 import { DiscordConfigService } from './discord.config.service';
+import { JwtService } from '@nestjs/jwt';
 
 describe('DiscordService', () => {
   let service: DiscordService;
@@ -31,6 +32,7 @@ describe('DiscordService', () => {
           RoleService,
           GroupService,
           EventService,
+          JwtService,
           DiscordService,
           DiscordUpdate,
         ],

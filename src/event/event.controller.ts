@@ -14,7 +14,7 @@ import { EventService } from './event.service';
 import { Event, House, User } from '@prisma/client';
 import { AuthGuard } from '../auth/auth.guard';
 import { JwtService } from '@nestjs/jwt';
-import { Request } from 'express';
+import { Request } from '@nestjs/common';
 
 @UseGuards(AuthGuard)
 @Controller('event')
@@ -34,7 +34,7 @@ export class EventController {
   @Get()
   findAll(@Req() req: Request) {
     const user = this.jwtService.verify(
-      req.headers.authorization.split(' ')[1],
+      req.headers.get('authorization')?.split(' ')[1],
     ) as User;
 
     return this.eventService.findAll(user.id);

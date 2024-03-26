@@ -10,6 +10,8 @@ import { EventService } from '../event/event.service';
 import TestModuleBuilder from '../../test/test.module';
 import { NecordModule } from 'necord';
 import { DiscordConfigService } from './discord.config.service';
+import { JwtService } from '@nestjs/jwt';
+import { DiscordUpdate } from './discord.update.service';
 
 describe('DiscordController', () => {
   let controller: DiscordController;
@@ -30,6 +32,8 @@ describe('DiscordController', () => {
           RoleService,
           GroupService,
           EventService,
+          JwtService,
+          DiscordUpdate,
           DiscordService,
         ],
       })
