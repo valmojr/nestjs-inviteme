@@ -1,3 +1,4 @@
+import { BadRequestException } from '@nestjs/common';
 import { House } from '@prisma/client';
 import { randomUUID } from 'crypto';
 import { Guild } from 'discord.js';
@@ -6,6 +7,10 @@ import { HouseService } from 'src/house/house.service';
 export default function GuildParser(guild: Guild, isPublic?: boolean): House {
   if (isPublic === undefined) {
     isPublic = false;
+  }
+
+  if (!guild?.id || !guild?.createdAt || !guild?.name) {
+    throw new BadRequestException('invalid guild information provided');
   }
 
   return {
