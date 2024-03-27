@@ -29,9 +29,8 @@ export class DiscordService {
   private readonly logger = new Logger(DiscordService.name);
 
   async guildCreator(guild: Guild) {
-    this.logger.log(`Joined guild ${guild.name}`);
-
     const house = GuildParser(guild);
+    this.logger.log(`Joined guild ${guild.name}`);
 
     return await this.houseService.upsertByDiscord(house);
   }
