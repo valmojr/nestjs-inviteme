@@ -8,7 +8,7 @@ import { UserService } from 'src/user/user.service';
 export default function UserParser(token: string, jwtService: JwtService) {
   const fetchedUser = jwtService.verify(token) as User;
 
-  if (!fetchedUser || !fetchedUser.id || !fetchedUser.username) {
+  if (!fetchedUser) {
     throw new UnauthorizedException('user not parsed');
   }
 
