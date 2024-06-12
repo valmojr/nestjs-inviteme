@@ -10,4 +10,6 @@ COPY . .
 
 EXPOSE 8080
 
+EXPOSE 5555
+
 CMD ["npm", "run", "start:local"]  # Replace with "start" for production
