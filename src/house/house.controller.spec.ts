@@ -4,13 +4,16 @@ import { HouseService } from './house.service';
 import { PrismaService } from '../prisma/prisma.service';
 import TestModuleBuilder from '../../test/test.module';
 import { UserService } from '../user/user.service';
-import { House } from '@prisma/client';
+import { House, User } from '@prisma/client';
 import { randomUUID } from 'crypto';
 import { Request } from 'express';
+import { createRequest } from 'node-mocks-http';
+import { JwtService } from '@nestjs/jwt';
 
 describe('HouseController', () => {
   let controller: HouseController;
   let service: HouseService;
+  let jwtService: JwtService;
 
   const testHouse: House = {
     id: randomUUID(),
@@ -23,6 +26,20 @@ describe('HouseController', () => {
     banner: null,
   };
 
+  const testUser: User = {
+    id: randomUUID(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    username: 'testUser',
+    displayName: 'testUser',
+    discordId: null,
+    banner: null,
+    bannerColor: null,
+    avatar: null,
+    email: null,
+    password: null,
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await (
       await TestModuleBuilder({
@@ -33,6 +50,7 @@ describe('HouseController', () => {
 
     controller = module.get<HouseController>(HouseController);
     service = module.get<HouseService>(HouseService);
+    jwtService = module.get<JwtService>(JwtService);
 
     service.create = jest.fn().mockResolvedValueOnce(testHouse);
     service.findAll = jest.fn().mockResolvedValueOnce([testHouse]);
@@ -59,8 +77,14 @@ describe('HouseController', () => {
   });
 
   it('should be able to find all houses', async () => {
-    let request: Request;
-    request.headers.authorization = 'bearer test';
+    jwtService.verify = jest.fn().mockResolvedValueOnce(testUser);
+
+    const request: Request = createRequest<any>({
+      method: 'GET',
+      headers: {
+        authorization: 'bearer token',
+      },
+    }) as Request;
 
     const houses = await controller.findAll(request);
 

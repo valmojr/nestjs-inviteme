@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Event, House } from '@prisma/client';
+import { Event, House, User } from '@prisma/client';
 import { randomUUID } from 'crypto';
 import { CreateEventDTO } from './event.type';
 
@@ -9,7 +9,7 @@ function EventChecker(data: Event | CreateEventDTO) {
     throw new BadRequestException('Name and start date are required');
   }
 
-  if (data.startDate && isNaN(data.startDate.getTime())) {
+  if (isNaN(new Date(data.startDate).getTime())) {
     throw new BadRequestException('Start date must be a valid date');
   }
 
@@ -32,8 +32,13 @@ function EventChecker(data: Event | CreateEventDTO) {
 export class EventService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(data: CreateEventDTO) {
+  async create(data: CreateEventDTO, user: User) {
     EventChecker(data);
+
+    if (!data.ownerID) {
+      data.ownerID = user.id;
+    }
+
     return await this.prismaService.event.create({
       data: {
         id: `${randomUUID()}`,

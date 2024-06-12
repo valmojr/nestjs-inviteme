@@ -4,13 +4,16 @@ import { GroupService } from './group.service';
 import { PrismaService } from '../prisma/prisma.service';
 import TestModuleBuilder from '../../test/test.module';
 import { UserService } from '../user/user.service';
-import { Group } from '@prisma/client';
+import { Group, User } from '@prisma/client';
 import { randomUUID } from 'crypto';
 import { Request } from 'express';
+import { JwtService } from '@nestjs/jwt';
+import { createRequest } from 'node-mocks-http';
 
 describe('GroupController', () => {
   let controller: GroupController;
   let service: GroupService;
+  let jwtService: JwtService;
 
   const testGroup: Group = {
     id: randomUUID(),
@@ -20,6 +23,20 @@ describe('GroupController', () => {
     roleIDs: [],
     fatherGroupID: null,
     eventID: null,
+  };
+
+  const testUser: User = {
+    id: randomUUID(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    username: 'testUser',
+    displayName: 'testUser',
+    discordId: null,
+    banner: null,
+    bannerColor: null,
+    avatar: null,
+    email: null,
+    password: null,
   };
 
   beforeEach(async () => {
@@ -32,6 +49,7 @@ describe('GroupController', () => {
 
     controller = module.get<GroupController>(GroupController);
     service = module.get<GroupService>(GroupService);
+    jwtService = module.get<JwtService>(JwtService);
 
     service.create = jest.fn().mockResolvedValueOnce(testGroup);
     service.findAll = jest.fn().mockResolvedValueOnce([testGroup]);
@@ -58,16 +76,20 @@ describe('GroupController', () => {
   });
 
   it('should be able to find all groups', async () => {
-    let request: Request;
-    request.headers = { authorization: 'test' };
+    jwtService.verify = jest.fn().mockResolvedValueOnce(testUser);
+
+    const request: Request = createRequest<any>({
+      method: 'GET',
+      headers: {
+        authorization: 'bearer token',
+      },
+    }) as Request;
 
     const groups = await controller.findAll(request);
 
     expect(groups).toBeDefined();
     expect(groups).toBeInstanceOf(Array);
-    expect(
-      service.findAll,
-    ).toHaveBeenCalledWith(/* Provide the expected user ID */);
+    expect(groups).toEqual([testGroup]);
   });
 
   it('should be able to find one group', async () => {

@@ -110,6 +110,11 @@ export class DiscordService {
       public: false,
     };
 
-    return await this.eventService.create(event);
+    const parsedOwner = await DiscordUserParser(
+      guildScheduledEvent.creator,
+      this.userService,
+    );
+
+    return await this.eventService.create(event, parsedOwner);
   }
 }

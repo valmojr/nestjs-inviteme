@@ -8,6 +8,7 @@ import { Event, User } from '@prisma/client';
 import { randomUUID } from 'crypto';
 import { JwtService } from '@nestjs/jwt';
 import { createRequest } from 'node-mocks-http';
+import { Request } from 'express';
 
 describe('EventController', () => {
   let controller: EventController;
