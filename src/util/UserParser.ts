@@ -20,6 +20,7 @@ export async function DiscordUserParser(
   userService: UserService,
 ): Promise<User> {
   const userOnDatabase = await userService.findByDiscordId(discordUser.id);
+  console.log(`User on database => ${userOnDatabase}`);
 
   return await userService.upsertByDiscord({
     id: userOnDatabase?.id || `${randomUUID()}`,
