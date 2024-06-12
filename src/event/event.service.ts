@@ -45,6 +45,9 @@ export class EventService {
         createdAt: new Date(),
         updatedAt: new Date(),
         ...data,
+        users: {
+          connect: { id: user.id },
+        },
       },
     });
   }
@@ -70,8 +73,9 @@ export class EventService {
 
   async findAll(id: string) {
     return await this.prismaService.event.findMany({
-      where: {
-        users: { some: { id } },
+      where: { users: { some: { id } } },
+      orderBy: {
+        startDate: 'asc',
       },
     });
   }
