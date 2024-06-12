@@ -5,7 +5,10 @@ import { randomUUID } from 'crypto';
 import { User as DiscordUser } from 'discord.js';
 import { UserService } from 'src/user/user.service';
 
-export default function UserParser(token: string, jwtService: JwtService) {
+export default function UserParser(
+  token: string,
+  jwtService: JwtService,
+): User {
   const fetchedUser = jwtService.verify(token) as User;
 
   if (!fetchedUser) {

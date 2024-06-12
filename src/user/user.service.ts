@@ -83,7 +83,7 @@ export class UserService {
     });
   }
 
-  async upsertByDiscord(data: User) {
+  async upsertByDiscord(data: User): Promise<User> {
     return await this.prismaService.user.upsert({
       where: { discordId: data.discordId },
       update: { ...data, updatedAt: new Date() },
