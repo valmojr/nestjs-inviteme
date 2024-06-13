@@ -33,7 +33,7 @@ export class AuthService {
   }
 
   async getMe(token: string) {
-    const user = await this.jwtService.verify(token);
+    const { user } = await this.jwtService.verify(token);
     const userOnDatabase = await this.userService.findOne(user);
 
     if (userOnDatabase) {
