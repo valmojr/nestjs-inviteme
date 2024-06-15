@@ -21,7 +21,7 @@ function EventChecker(data: Event | CreateEventDTO) {
 
   const now = new Date();
 
-  if (data.startDate < now) {
+  if (new Date(data.startDate) < now) {
     throw new BadRequestException('Start date must be in the future');
   }
 
