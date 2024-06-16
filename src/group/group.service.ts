@@ -22,6 +22,12 @@ export class GroupService {
     });
   }
 
+  async findByEvent(id: string) {
+    return await this.prismaService.group.findMany({
+      where: { event: { id } },
+    });
+  }
+
   async findOne(idOrGroup: string | Group) {
     return await this.prismaService.group.findUnique({
       where: {
