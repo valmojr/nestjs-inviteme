@@ -90,3 +90,13 @@ model House {
   events    Event[]  @relation("EventToHouse")
   users     User[]   @relation("HouseToUser")
 }
+
+model Image {
+  id        String   @id @unique @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String?
+  eventId   String?
+  filename  String
+  url       String?
+}
