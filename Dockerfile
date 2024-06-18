@@ -7,7 +7,7 @@ RUN npm install
 
 COPY . .
 
-RUN npm run prisma:migrate_dev:local
+RUN npm run prisma:generate:local
 
 EXPOSE 8080
 

@@ -13,7 +13,8 @@ model User {
   id          String   @id @unique @default(cuid())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  avatar      String?
+  avatar      Image?   @relation(fields: [avatarId], references: [id])
+  avatarId    String?
   email       String?  @unique
   password    String?
   bannerColor String?
@@ -49,6 +50,8 @@ model Group {
   roleIDs              String[]
   fatherGroupID        String?
   eventID              String
+  thumbnail            Image?   @relation(fields: [thumbnailId], references: [id])
+  thumbnailId          String?
   isFatherGroupOfEvent Event?   @relation("fatherGroupToEvent")
   event                Event    @relation("GroupsToEvent", fields: [eventID], references: [id])
   fatherGroup          Group?   @relation("GroupToFatherGroup", fields: [fatherGroupID], references: [id])
@@ -58,24 +61,25 @@ model Group {
 }
 
 model Event {
-  id          String    @id @unique @default(cuid())
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id          String     @id @unique @default(cuid())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
   name        String
-  mainGroupID String?   @unique
+  mainGroupID String?    @unique
   location    String?
   description String?
   endDate     DateTime?
   ownerID     String
   startDate   DateTime
-  thumbnail   String?
-  public      Boolean
-  mainGroup   Group?    @relation("fatherGroupToEvent", fields: [mainGroupID], references: [id])
-  owner       User      @relation("UserToOwnedEvents", fields: [ownerID], references: [id])
-  groups      Group[]   @relation("GroupsToEvent")
+  thumbnail   Image?     @relation(fields: [imageId], references: [id])
+  imageId     String?
+  visibility  Visibility
+  mainGroup   Group?     @relation("fatherGroupToEvent", fields: [mainGroupID], references: [id])
+  owner       User       @relation("UserToOwnedEvents", fields: [ownerID], references: [id])
+  groups      Group[]    @relation("GroupsToEvent")
   Role        Role[]
-  House       House[]   @relation("EventToHouse")
-  users       User[]    @relation("UserToAttendedEvents")
+  House       House[]    @relation("EventToHouse")
+  users       User[]     @relation("UserToAttendedEvents")
 }
 
 model House {
@@ -99,4 +103,13 @@ model Image {
   eventId   String?
   filename  String
   url       String?
+  Event     Event[]
+  Group     Group[]
+  User      User[]
+}
+
+enum Visibility {
+  PRIVATE
+  UNLISTED
+  PUBLIC
 }
