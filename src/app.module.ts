@@ -8,6 +8,7 @@ import { RoleModule } from './role/role.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { DiscordModule } from './discord/discord.module';
+import { ImageModule } from './image/image.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { DiscordModule } from './discord/discord.module';
     RoleModule,
     AuthModule,
     DiscordModule,
+    ImageModule,
   ],
 })
 export class AppModule {}
