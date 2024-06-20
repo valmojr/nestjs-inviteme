@@ -23,7 +23,7 @@ describe('Auth Guard Tests', () => {
     discordId: null,
     password: null,
     email: null,
-    avatar: null,
+    avatarId: null,
     bannerColor: null,
     banner: null,
   };
