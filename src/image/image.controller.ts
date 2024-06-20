@@ -14,6 +14,7 @@ import { ImageService } from './image.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as multer from 'multer';
 import { Image } from '@prisma/client';
+import { randomUUID } from 'crypto';
 
 @Controller('image')
 export class ImageController {
@@ -25,7 +26,6 @@ export class ImageController {
       storage: multer.diskStorage({
         destination: './uploads',
         filename: (req, file, callback) => {
-          console.log(req.url);
           const uniqueSuffix =
             Date.now() + '-' + Math.round(Math.random() * 1e9);
           const filename = `${uniqueSuffix}-${file.originalname}`;
@@ -46,14 +46,20 @@ export class ImageController {
       },
     }),
   )
-  fileUpload(
+  async fileUpload(
     @Body() body: any,
     @UploadedFile()
     file: Express.Multer.File,
   ) {
     console.log('file ', JSON.stringify(file));
+    const imageOnDatabase = await this.imageService.create({
+      id: randomUUID(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      filepath: file.path,
+    });
 
-    return { message: 'File sent ok!', filename: file.filename };
+    return { message: 'File sent ok!', filename: imageOnDatabase.filepath };
   }
 
   @Get()
