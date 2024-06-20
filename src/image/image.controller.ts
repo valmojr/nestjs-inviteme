@@ -23,11 +23,11 @@ import { AuthGuard } from 'src/auth/auth.guard';
 export class ImageController {
   constructor(private readonly imageService: ImageService) {}
 
-  @Post('upload')
+  @Post('upload/avatar')
   @UseInterceptors(
     FileInterceptor('file', {
       storage: multer.diskStorage({
-        destination: './uploads',
+        destination: './uploads/users',
         filename: (req, file, callback) => {
           const uniqueSuffix =
             Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -49,7 +49,7 @@ export class ImageController {
       },
     }),
   )
-  async fileUpload(
+  async userAvatarUpload(
     @Body() body: any,
     @UploadedFile()
     file: Express.Multer.File,
@@ -62,14 +62,14 @@ export class ImageController {
       filepath: file.path,
     });
 
-    return { message: 'File sent ok!', filename: imageOnDatabase.filepath };
+    return { message: 'Avatar sent fine!', filename: imageOnDatabase.filepath };
   }
 
   @UseGuards(AuthGuard)
-  @Get(':imgpath')
-  async getImage(@Param('imgpath') imgpath: string, @Res() res: Response) {
+  @Get('upload/avatar/:imgpath')
+  async getUserAvatar(@Param('imgpath') imgpath: string, @Res() res: Response) {
     const uploadsPath = process.env.UPLOADS_PATH;
-    const path = join(uploadsPath, imgpath);
+    const path = join(uploadsPath, 'users', imgpath);
     console.log(path);
     if (!existsSync(path)) {
       return res.status(404).send('Image not found.');
