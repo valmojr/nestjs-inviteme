@@ -3,18 +3,21 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete,
   UseInterceptors,
   UploadedFile,
   BadRequestException,
+  Res,
+  UseGuards,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { ImageService } from './image.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as multer from 'multer';
-import { Image } from '@prisma/client';
 import { randomUUID } from 'crypto';
+import { join } from 'path';
+import { existsSync } from 'fs';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('image')
 export class ImageController {
@@ -62,23 +65,16 @@ export class ImageController {
     return { message: 'File sent ok!', filename: imageOnDatabase.filepath };
   }
 
-  @Get()
-  findAll() {
-    return this.imageService.findAll();
-  }
+  @UseGuards(AuthGuard)
+  @Get(':imgpath')
+  async getImage(@Param('imgpath') imgpath: string, @Res() res: Response) {
+    const uploadsPath = process.env.UPLOADS_PATH;
+    const path = join(uploadsPath, imgpath);
+    console.log(path);
+    if (!existsSync(path)) {
+      return res.status(404).send('Image not found.');
+    }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.imageService.findOne(id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() image: Image) {
-    return this.imageService.update(image);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.imageService.remove(id);
+    res.sendFile(path);
   }
 }
