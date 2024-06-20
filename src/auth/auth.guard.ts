@@ -8,6 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { Request } from 'express';
 import { UserService } from '../user/user.service';
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -19,23 +20,32 @@ export class AuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
+
     if (!token) {
       throw new UnauthorizedException('no token provided');
     }
 
-    const payload = await this.jwtService.verifyAsync<{ user: User }>(token, {
-      secret: process.env.AUTH_SECRET,
-    });
+    try {
+      const payload = await this.jwtService.verifyAsync<{ user: User }>(token, {
+        secret: process.env.AUTH_SECRET,
+      });
 
-    request.user = payload;
+      request.user = payload;
 
-    const user = await this.userService.findOne(payload?.user);
+      const user = await this.userService.findOne(payload?.user);
 
-    if (!user) {
-      throw new UnauthorizedException('user not found');
+      if (!user) {
+        throw new UnauthorizedException('user not found');
+      }
+
+      return true;
+    } catch (error) {
+      if (error instanceof jwt.TokenExpiredError) {
+        throw new UnauthorizedException('Token expired, please login again');
+      } else {
+        throw error;
+      }
     }
-
-    return true;
   }
 
   private extractTokenFromHeader(request: Request): string | undefined {
