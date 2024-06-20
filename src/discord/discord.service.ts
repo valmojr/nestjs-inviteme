@@ -90,6 +90,7 @@ export class DiscordService {
       eventID: null,
       name: 'main',
       roleIDs: [],
+      thumbnailId: null,
     });
 
     role = await this.roleService.update({ ...role, groupID: group.id });
@@ -106,8 +107,8 @@ export class DiscordService {
       endDate: guildScheduledEvent.scheduledEndAt,
       ownerID: guildScheduledEvent.creatorId,
       startDate: guildScheduledEvent.scheduledStartAt,
-      thumbnail: guildScheduledEvent.image,
-      public: false,
+      thumbnailId: guildScheduledEvent.image,
+      visibility: 'PUBLIC',
     };
 
     const parsedOwner = await DiscordUserParser(
