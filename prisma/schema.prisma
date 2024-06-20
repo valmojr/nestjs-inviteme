@@ -70,7 +70,7 @@ model Event {
   ownerID     String
   startDate   DateTime
   thumbnailId String?
-  visibility  Visibility
+  visibility  Visibility @default(PUBLIC)
   mainGroup   Group?     @relation("fatherGroupToEvent", fields: [mainGroupID], references: [id])
   owner       User       @relation("UserToOwnedEvents", fields: [ownerID], references: [id])
   groups      Group[]    @relation("GroupsToEvent")
