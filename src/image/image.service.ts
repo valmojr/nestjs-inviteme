@@ -1,26 +1,45 @@
 import { Injectable } from '@nestjs/common';
-import { CreateImageDto } from './dto/create-image.dto';
-import { UpdateImageDto } from './dto/update-image.dto';
+import { Image } from '@prisma/client';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class ImageService {
-  create(createImageDto: CreateImageDto) {
-    return 'This action adds a new image' + JSON.stringify(createImageDto);
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async create(data: Image) {
+    return await this.prismaService.image.create({ data });
   }
 
-  findAll() {
-    return `This action returns all image`;
+  async findAll() {
+    return await this.prismaService.image.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} image`;
+  async findOne(imageOrImageId: Image | string) {
+    return await this.prismaService.image.findUnique({
+      where: {
+        id:
+          typeof imageOrImageId == 'string'
+            ? imageOrImageId
+            : imageOrImageId.id,
+      },
+    });
   }
 
-  update(id: number, updateImageDto: UpdateImageDto) {
-    return `This action updates a #${id} image`;
+  async update(data: Image, id?: string) {
+    return await this.prismaService.image.update({
+      where: { id: id ? id : data.id },
+      data,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} image`;
+  async remove(imageOrImageId: Image | string) {
+    return await this.prismaService.image.delete({
+      where: {
+        id:
+          typeof imageOrImageId == 'string'
+            ? imageOrImageId
+            : imageOrImageId.id,
+      },
+    });
   }
 }

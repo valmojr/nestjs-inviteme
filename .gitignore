@@ -46,6 +46,7 @@ lerna-debug.log*
 # Runtime data
 pids
 data
+uploads
 prisma/migrations
 *.pid
 *.seed

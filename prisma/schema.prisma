@@ -13,7 +13,6 @@ model User {
   id          String   @id @unique @default(cuid())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  avatar      Image?   @relation(fields: [avatarId], references: [id])
   avatarId    String?
   email       String?  @unique
   password    String?
@@ -50,7 +49,6 @@ model Group {
   roleIDs              String[]
   fatherGroupID        String?
   eventID              String
-  thumbnail            Image?   @relation(fields: [thumbnailId], references: [id])
   thumbnailId          String?
   isFatherGroupOfEvent Event?   @relation("fatherGroupToEvent")
   event                Event    @relation("GroupsToEvent", fields: [eventID], references: [id])
@@ -71,8 +69,7 @@ model Event {
   endDate     DateTime?
   ownerID     String
   startDate   DateTime
-  thumbnail   Image?     @relation(fields: [imageId], references: [id])
-  imageId     String?
+  thumbnailId String?
   visibility  Visibility
   mainGroup   Group?     @relation("fatherGroupToEvent", fields: [mainGroupID], references: [id])
   owner       User       @relation("UserToOwnedEvents", fields: [ownerID], references: [id])
@@ -99,13 +96,7 @@ model Image {
   id        String   @id @unique @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  userId    String?
-  eventId   String?
-  filename  String
-  url       String?
-  Event     Event[]
-  Group     Group[]
-  User      User[]
+  filepath  String
 }
 
 enum Visibility {
