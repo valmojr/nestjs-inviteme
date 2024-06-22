@@ -10,7 +10,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { Response } from 'express';
+import { Response, Express } from 'express';
 import { ImageService } from './image.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as multer from 'multer';
