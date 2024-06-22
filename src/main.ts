@@ -11,6 +11,6 @@ async function bootstrap() {
     console.error('Unhandled Exception:', err);
   });
 
-  await app.listen(process.env.ENVIRONMENT_PORT || 10000);
+  await app.listen(process.env.PORT || 10000);
 }
 bootstrap();
