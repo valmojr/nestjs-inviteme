@@ -16,7 +16,7 @@
     "start:local": "dotenv -e .env.local -- npx nest start --watch",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
+    "start:prod": "node dist/src/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest --watch --coverage",
     "test:watch": "jest --watch",
