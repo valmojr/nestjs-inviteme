@@ -48,6 +48,8 @@ export class AuthService {
     let token: DiscordAccessToken;
     let user: DiscordUser;
 
+    this.logger.log('Connecting to Discord OAuth Token Provider');
+
     const api_url = 'https://discord.com/api/oauth2/token';
     const body = new URLSearchParams();
     body.append('client_id', process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID || '');
@@ -69,9 +71,12 @@ export class AuthService {
       });
 
       token = (await response.json()) as DiscordAccessToken;
+
+      this.logger.log('Token provided => ', JSON.stringify(token));
     } catch (error) {
       throw new BadRequestException(`Failed to get access token: ${error}`);
     }
+
     try {
       const response = await fetch('https://discord.com/api/users/@me', {
         method: 'GET',
@@ -81,6 +86,9 @@ export class AuthService {
         },
       });
       user = (await response.json()) as DiscordUser;
+      this.logger.error(
+        `Exchanged token for Discord User=> ${JSON.stringify(user)}`,
+      );
     } catch (error) {
       throw new BadRequestException(`Failed to get user: ${error}`);
     }
