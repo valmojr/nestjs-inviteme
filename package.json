@@ -7,7 +7,10 @@
   "license": "UNLICENSED",
   "prisma.schema": "./prisma/schema.prisma",
   "scripts": {
-    "build": "nest build",
+    "build:raw": "npx nest build",
+    "build:local": "dotenv -e .env.local -- npx nest build",
+    "build:dev": "dotenv -e .env.dev -- npx nest build",
+    "build:prod": "dotenv -e .env.prod -- npx nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:local": "dotenv -e .env.local -- npx nest start --watch",
