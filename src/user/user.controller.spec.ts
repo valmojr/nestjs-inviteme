@@ -17,7 +17,7 @@ describe('UserController', () => {
     username: 'test_user',
     discordId: '1234567890',
     displayName: 'Test User',
-    avatar: null,
+    avatarId: null,
     email: null,
     password: null,
     bannerColor: null,

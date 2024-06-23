@@ -35,7 +35,7 @@ describe('HouseController', () => {
     discordId: null,
     banner: null,
     bannerColor: null,
-    avatar: null,
+    avatarId: null,
     email: null,
     password: null,
   };

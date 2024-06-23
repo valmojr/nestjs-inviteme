@@ -17,7 +17,7 @@ describe('UserService', () => {
     username: 'Test User',
     displayName: 'Test User',
     password: null,
-    avatar: null,
+    avatarId: null,
     email: null,
     bannerColor: null,
     banner: null,

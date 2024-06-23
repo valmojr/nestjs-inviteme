@@ -17,6 +17,7 @@ describe('GroupService', () => {
     roleIDs: [],
     fatherGroupID: null,
     eventID: randomUUID(),
+    thumbnailId: null,
   };
 
   beforeEach(async () => {

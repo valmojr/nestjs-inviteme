@@ -23,6 +23,7 @@ describe('GroupController', () => {
     roleIDs: [],
     fatherGroupID: null,
     eventID: null,
+    thumbnailId: null,
   };
 
   const testUser: User = {
@@ -34,7 +35,7 @@ describe('GroupController', () => {
     discordId: null,
     banner: null,
     bannerColor: null,
-    avatar: null,
+    avatarId: null,
     email: null,
     password: null,
   };

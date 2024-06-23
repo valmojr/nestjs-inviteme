@@ -20,7 +20,7 @@ describe('AuthController', () => {
     createdAt: new Date(),
     updatedAt: new Date(),
     password: null,
-    avatar: null,
+    avatarId: null,
     email: null,
     bannerColor: null,
     banner: null,

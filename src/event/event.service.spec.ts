@@ -3,7 +3,7 @@ import { EventService } from './event.service';
 import { PrismaService } from '../prisma/prisma.service';
 import TestModuleBuilder from '../../test/test.module';
 import { randomUUID } from 'crypto';
-import { Event } from '@prisma/client';
+import { Event, User } from '@prisma/client';
 
 describe('EventService', () => {
   let service: EventService;
@@ -16,12 +16,26 @@ describe('EventService', () => {
     name: 'Test Event',
     startDate: new Date('2025-03-10'),
     endDate: new Date('2025-03-11'),
-    thumbnail: 'thumbnail',
+    thumbnailId: 'thumbnail',
     description: 'description',
     location: 'location',
     mainGroupID: null,
     ownerID: null,
-    public: false,
+    visibility: 'PUBLIC',
+  };
+
+  const mockUser: User = {
+    id: randomUUID(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    username: 'testUser',
+    displayName: 'testUser',
+    discordId: null,
+    banner: null,
+    bannerColor: null,
+    avatarId: null,
+    email: null,
+    password: null,
   };
 
   beforeEach(async () => {
@@ -54,12 +68,15 @@ describe('EventService', () => {
 
   it('should not be able to create a event if the name or start date are not provided', async () => {
     try {
-      const newEvent = await service.create({
-        ...testEvent,
-        name: null,
-        startDate: null,
-        public: false,
-      });
+      const newEvent = await service.create(
+        {
+          ...testEvent,
+          name: null,
+          startDate: null,
+          visibility: 'PUBLIC',
+        },
+        mockUser,
+      );
 
       expect(newEvent).toThrowErrorMatchingInlineSnapshot(
         "'Name and start date are required'",
@@ -73,11 +90,14 @@ describe('EventService', () => {
 
   it('should not be able to create a event if the start date or end date is not a valid date', async () => {
     try {
-      const newEvent = await service.create({
-        ...testEvent,
-        startDate: new Date('invalid date'),
-        public: false,
-      });
+      const newEvent = await service.create(
+        {
+          ...testEvent,
+          startDate: new Date('invalid date'),
+          visibility: 'PRIVATE',
+        },
+        mockUser,
+      );
 
       expect(newEvent).toThrowErrorMatchingInlineSnapshot(
         "'Start date must be a valid date'",
@@ -91,11 +111,14 @@ describe('EventService', () => {
 
   it('should not be able to create a event if the start date is in past', async () => {
     try {
-      const newEvent = await service.create({
-        ...testEvent,
-        startDate: new Date('2020-01-01'),
-        public: false,
-      });
+      const newEvent = await service.create(
+        {
+          ...testEvent,
+          startDate: new Date('2020-01-01'),
+          visibility: 'PUBLIC',
+        },
+        mockUser,
+      );
 
       expect(newEvent).toThrowErrorMatchingInlineSnapshot(
         "'Start date must be in the future'",
@@ -109,12 +132,15 @@ describe('EventService', () => {
 
   it('should not be able to create a event if the start date is later than the end date', async () => {
     try {
-      const newEvent = await service.create({
-        ...testEvent,
-        startDate: new Date('2022-01-01'),
-        endDate: new Date('2021-01-01'),
-        public: false,
-      });
+      const newEvent = await service.create(
+        {
+          ...testEvent,
+          startDate: new Date('2022-01-01'),
+          endDate: new Date('2021-01-01'),
+          visibility: 'PUBLIC',
+        },
+        mockUser,
+      );
 
       expect(newEvent).toThrowErrorMatchingInlineSnapshot(
         "'Start date must be before end date'",
@@ -127,7 +153,7 @@ describe('EventService', () => {
   });
 
   it('should be able to create a event', async () => {
-    const newEvent = await service.create(testEvent);
+    const newEvent = await service.create(testEvent, mockUser);
 
     expect(newEvent).toBeDefined();
   });
@@ -150,7 +176,7 @@ describe('EventService', () => {
       id: randomUUID(),
       createdAt: new Date(),
       updatedAt: new Date(),
-      public: false,
+      visibility: 'PUBLIC',
     });
 
     expect(upsertedEvent).toBeDefined();
@@ -224,10 +250,10 @@ describe('EventService', () => {
       endDate: new Date(),
       description: 'description',
       location: 'location',
-      thumbnail: 'thumbnail',
+      thumbnailId: 'thumbnail',
       mainGroupID: null,
       ownerID: 'something',
-      public: false,
+      visibility: 'PUBLIC',
     });
 
     expect(oneEvent).toBeDefined();
@@ -253,7 +279,7 @@ describe('EventService', () => {
       id: randomUUID(),
       createdAt: new Date(),
       updatedAt: new Date(),
-      public: false,
+      visibility: 'PUBLIC',
     });
 
     expect(updatedEvent).toBeDefined();
@@ -306,10 +332,10 @@ describe('EventService', () => {
       endDate: new Date(),
       description: 'description',
       location: 'location',
-      thumbnail: 'thumbnail',
+      thumbnailId: 'thumbnail',
       mainGroupID: null,
       ownerID: 'something',
-      public: false,
+      visibility: 'PUBLIC',
     });
 
     expect(deletedEvent).toBeDefined();

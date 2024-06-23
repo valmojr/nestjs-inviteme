@@ -22,12 +22,12 @@ describe('EventController', () => {
     name: 'Test Event',
     startDate: new Date(),
     endDate: null,
-    thumbnail: null,
+    thumbnailId: null,
     mainGroupID: null,
     ownerID: null,
     location: null,
     description: null,
-    public: false,
+    visibility: 'PUBLIC',
   };
 
   const testUser: User = {
@@ -39,7 +39,7 @@ describe('EventController', () => {
     discordId: null,
     banner: null,
     bannerColor: null,
-    avatar: null,
+    avatarId: null,
     email: null,
     password: null,
   };
