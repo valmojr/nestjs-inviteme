@@ -86,7 +86,7 @@ export class AuthService {
         },
       });
       user = (await response.json()) as DiscordUser;
-      this.logger.error(
+      this.logger.log(
         `Exchanged token for Discord User=> ${JSON.stringify(user)}`,
       );
     } catch (error) {
