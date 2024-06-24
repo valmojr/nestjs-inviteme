@@ -7,6 +7,7 @@ import { User } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { Response } from 'express';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -91,9 +92,35 @@ describe('AuthController', () => {
       expect(result).toEqual(false);
     });
   });
+
   describe('Discord OAuth2 Route tests', () => {
-    it('should not return a user if the discord provided info is not valid', async () => {});
-    it('should return a user if the discord provided info is valid', async () => {});
+    it('should not return a user if the discord provided info is not valid', async () => {
+      const token = 'Discord_O_Auth_2_Auth_token';
+      let response: Response<any, Record<string, any>>;
+
+      jest
+        .spyOn(authService, 'discordOAuthCallback')
+        .mockResolvedValueOnce(null);
+
+      const result = controller.discordLogin(token, response);
+
+      expect(result).toBeDefined();
+      expect(result).toThrowErrorMatchingSnapshot('Failed to get access token');
+    });
+    it('should return a user if the discord provided info is valid', async () => {
+      const token = 'valid_oauth2_token';
+      let response: Response<any, Record<string, any>>;
+
+      jest
+        .spyOn(authService, 'discordOAuthCallback')
+        .mockResolvedValueOnce(response);
+
+      const result = controller.discordLogin(token, response);
+
+      expect(result).toBeDefined();
+      expect(result).not.toThrow();
+      expect(result).toEqual(mockUser);
+    });
     it("should return a updated user if the user's info already exists on the user table", async () => {});
   });
 });
