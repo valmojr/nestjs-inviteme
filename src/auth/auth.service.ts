@@ -94,6 +94,7 @@ export class AuthService {
         `Exchanged token for Discord User=> ${JSON.stringify(user)}`,
       );
     } catch (error) {
+      this.logger.error(`Failed to get user: ${error}`);
       throw new BadRequestException(`Failed to get user: ${error}`);
     }
 
