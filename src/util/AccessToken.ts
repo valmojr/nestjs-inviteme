@@ -4,4 +4,6 @@ export type DiscordAccessToken = {
   expires_in: number;
   refresh_token: string;
   scope: string;
+  error?: string;
+  error_description?: string;
 };

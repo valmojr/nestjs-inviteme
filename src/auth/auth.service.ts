@@ -72,6 +72,10 @@ export class AuthService {
 
       token = (await response.json()) as DiscordAccessToken;
 
+      if (token.error) {
+        throw new Error('Invalid Token provided');
+      }
+
       this.logger.log('Token provided => ', JSON.stringify(token));
     } catch (error) {
       throw new BadRequestException(`Failed to get access token: ${error}`);
