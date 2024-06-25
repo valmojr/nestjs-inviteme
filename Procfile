@@ -1,1 +1,1 @@
-web: npm run build && npx prisma generate && npm run start:prod
+npm install && npm run build:raw && npx prisma generate && npm run start:prod
