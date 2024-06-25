@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
-import { User as DiscordUser } from 'discord.js';
 import { DiscordAccessToken } from 'src/util/AccessToken';
 import { Response } from 'express';
 import { DiscordUserParser } from '../util/UserParser';
@@ -46,7 +45,7 @@ export class AuthService {
 
   async discordOAuthCallback(code: string, response: Response) {
     let token: DiscordAccessToken;
-    let user: DiscordUser;
+    let user: any;
 
     this.logger.log('Connecting to Discord OAuth Token Provider');
 
@@ -89,12 +88,15 @@ export class AuthService {
           Authorization: `Bearer ${token.access_token}`,
         },
       });
-      user = (await response.json()) as DiscordUser;
+
+      const data = await response.json();
+
+      user = data;
+
       this.logger.log(
-        `Exchanged token for Discord User=> ${JSON.stringify(user)}`,
+        `Exchanged token for Discord User=> ${JSON.stringify(data)}`,
       );
     } catch (error) {
-      this.logger.error(`Failed to get user: ${error}`);
       throw new BadRequestException(`Failed to get user: ${error}`);
     }
 
@@ -108,7 +110,7 @@ export class AuthService {
         secure: process.env.NODE_ENV === 'production',
       })
       .status(200)
-      .json({ user: userOnDatabase })
+      .json({ user: userOnDatabase, token: jwtToken })
       .send();
   }
 }
