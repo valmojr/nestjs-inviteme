@@ -96,6 +96,11 @@ export class DiscordService {
     role = await this.roleService.update({ ...role, groupID: group.id });
     group = await this.groupService.update({ ...group, roleIDs: [role.id] });
 
+    const parsedOwner = await DiscordUserParser(
+      guildScheduledEvent.creator,
+      this.userService,
+    );
+
     const event: Event = {
       id: randomUUID(),
       createdAt: new Date(),
@@ -105,17 +110,12 @@ export class DiscordService {
       location: guildScheduledEvent.channelId,
       description: guildScheduledEvent.description,
       endDate: guildScheduledEvent.scheduledEndAt,
-      ownerID: guildScheduledEvent.creatorId,
+      ownerID: parsedOwner.id,
       startDate: guildScheduledEvent.scheduledStartAt,
       thumbnailId: guildScheduledEvent.image,
       visibility: 'PUBLIC',
     };
 
-    const parsedOwner = await DiscordUserParser(
-      guildScheduledEvent.creator,
-      this.userService,
-    );
-
-    return await this.eventService.create(event, parsedOwner);
+    return await this.eventService.create(event);
   }
 }

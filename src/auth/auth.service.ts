@@ -9,6 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import { DiscordAccessToken } from 'src/util/AccessToken';
 import { Response } from 'express';
 import { DiscordUserParser } from '../util/UserParser';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -32,7 +33,10 @@ export class AuthService {
   }
 
   async getMe(token: string) {
-    const { user } = await this.jwtService.verify(token);
+    const { user } = await this.jwtService.verifyAsync<{ user: User }>(token, {
+      secret: process.env.AUTH_SECRET,
+    });
+
     const userOnDatabase = await this.userService.findOne(user);
 
     if (userOnDatabase) {

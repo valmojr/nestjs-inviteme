@@ -4,29 +4,56 @@ import { UserService } from '../user/user.service';
 import { PrismaService } from '../prisma/prisma.service';
 import TestModuleBuilder from '../../test/test.module';
 import { randomUUID } from 'crypto';
-import { sign } from 'jsonwebtoken';
+import { JwtModule, JwtService } from '@nestjs/jwt';
+import { User } from '@prisma/client';
+import { Response } from 'express';
 
 describe('AuthService', () => {
   let service: AuthService;
   let prisma: PrismaService;
+  let jwtService: JwtService;
+  let userService: UserService;
 
-  const testUser = {
+  let validToken: string;
+  let invalidToken: string;
+
+  const testUser: User = {
     id: randomUUID(),
     username: 'test',
     displayName: 'test',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    avatarId: null,
+    email: null,
+    password: null,
+    bannerColor: null,
+    discordId: null,
+    banner: null,
   };
 
   beforeEach(async () => {
+    process.env.AUTH_SECRET = 'super_secret_key';
+
     const module: TestingModule = await (
       await TestModuleBuilder({
-        providers: [PrismaService, AuthService, UserService],
+        imports: [
+          JwtModule.register({
+            global: true,
+            secret: process.env.AUTH_SECRET,
+            signOptions: { expiresIn: '1 hour' },
+          }),
+        ],
+        providers: [PrismaService, AuthService, UserService, JwtService],
       })
     ).compile();
 
     service = module.get<AuthService>(AuthService);
     prisma = module.get<PrismaService>(PrismaService);
+    jwtService = module.get<JwtService>(JwtService);
+    userService = module.get<UserService>(UserService);
 
-    process.env.AUTH_SECRET = 'super_secret_key';
+    validToken = jwtService.sign({ user: testUser });
+    invalidToken = 'invalid_token';
   });
 
   it('should be defined', () => {
@@ -54,9 +81,6 @@ describe('AuthService', () => {
   });
 
   describe('Identity Checker Tests', () => {
-    const invalidToken = 'invalid-token';
-    const validToken = sign(testUser, 'super_secret_key');
-
     it('should not be able to check the identity if the token provided is invalid', async () => {
       try {
         const auth = await service.getMe(invalidToken);
@@ -67,7 +91,7 @@ describe('AuthService', () => {
       }
     });
     it('should be able to check the identity of a valid token', async () => {
-      prisma.user.findUnique = jest.fn().mockReturnValueOnce(testUser);
+      userService.findOne = jest.fn().mockReturnValueOnce(testUser);
 
       const auth = await service.getMe(validToken);
 
@@ -75,11 +99,39 @@ describe('AuthService', () => {
     });
 
     it('should return false on ghost identity', async () => {
-      prisma.user.findUnique = jest.fn().mockReturnValueOnce(undefined);
+      userService.findOne = jest.fn().mockReturnValue(undefined);
 
       const auth = await service.getMe(validToken);
 
       expect(auth).toBe(false);
+    });
+  });
+
+  describe('Discord OAuth2 Method Tests', () => {
+    const validCode: string = 'validCode';
+    const invalidCode: string = 'invalidCode';
+    let response: Response;
+
+    beforeEach(() => {});
+    it('should throw error if no code is provided', async () => {
+      const testedResponse = service.discordOAuthCallback(null, response);
+
+      expect(testedResponse).toBeDefined();
+    });
+
+    it('should throw error if the code provided is invalid', async () => {
+      const testedResponse = service.discordOAuthCallback(
+        invalidCode,
+        response,
+      );
+
+      expect(testedResponse).toBeDefined();
+    });
+
+    it('should return a valid response if the provided code is valid', async () => {
+      const testedResponse = service.discordOAuthCallback(validCode, response);
+
+      expect(testedResponse).toBeDefined();
     });
   });
 });

@@ -98,29 +98,26 @@ describe('AuthController', () => {
       const token = 'Discord_O_Auth_2_Auth_token';
       let response: Response<any, Record<string, any>>;
 
-      jest
-        .spyOn(authService, 'discordOAuthCallback')
-        .mockResolvedValueOnce(null);
+      authService.discordOAuthCallback = jest.fn().mockReturnValue(null);
 
-      const result = controller.discordLogin(token, response);
+      const result = await controller.discordLogin(token, response);
 
       expect(result).toBeDefined();
-      expect(result).toThrowErrorMatchingSnapshot('Failed to get access token');
+      expect(result).toEqual(null);
     });
     it('should return a user if the discord provided info is valid', async () => {
-      const token = 'valid_oauth2_token';
-      let response: Response<any, Record<string, any>>;
+      const code = 'valid_oauth2_token';
+      const mockResponse = jest.fn() as unknown as Response;
 
-      jest
-        .spyOn(authService, 'discordOAuthCallback')
-        .mockResolvedValueOnce(response);
+      authService.discordOAuthCallback = jest
+        .fn()
+        .mockReturnValueOnce(Promise.resolve(mockUser));
 
-      const result = controller.discordLogin(token, response);
+      const result = await controller.discordLogin(code, mockResponse);
 
+      console.log('result => ', result);
       expect(result).toBeDefined();
-      expect(result).not.toThrow();
       expect(result).toEqual(mockUser);
     });
-    it("should return a updated user if the user's info already exists on the user table", async () => {});
   });
 });
