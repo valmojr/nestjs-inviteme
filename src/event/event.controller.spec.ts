@@ -15,6 +15,8 @@ describe('EventController', () => {
   let service: EventService;
   let jwtService: JwtService;
 
+  let token: string;
+
   const testEvent: Event = {
     id: randomUUID(),
     createdAt: new Date(),
@@ -56,6 +58,11 @@ describe('EventController', () => {
     service = module.get<EventService>(EventService);
     jwtService = module.get<JwtService>(JwtService);
 
+    token = jwtService.sign(
+      { user: testUser },
+      { secret: process.env.AUTH_SECRET },
+    );
+
     service.create = jest.fn().mockResolvedValueOnce(testEvent);
     service.findAll = jest.fn().mockResolvedValueOnce([testEvent]);
     service.findOne = jest.fn().mockResolvedValueOnce(testEvent);
@@ -75,7 +82,16 @@ describe('EventController', () => {
   });
 
   it('should be able to create an event', async () => {
-    const event = await controller.create(testEvent);
+    jwtService.verify = jest.fn().mockResolvedValueOnce(testUser);
+
+    const request: Request = createRequest<any>({
+      method: 'POST',
+      headers: {
+        authorization: `bearer ${token}`,
+      },
+    }) as Request;
+
+    const event = await controller.create(testEvent, request);
 
     expect(event).toEqual(testEvent);
   });
@@ -86,7 +102,7 @@ describe('EventController', () => {
     const request: Request = createRequest<any>({
       method: 'GET',
       headers: {
-        authorization: 'bearer token',
+        authorization: `bearer ${token}`,
       },
     }) as Request;
 

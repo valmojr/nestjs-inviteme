@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Event, House, User } from '@prisma/client';
+import { Event, House } from '@prisma/client';
 import { randomUUID } from 'crypto';
 import { CreateEventDTO } from './event.type';
 
@@ -32,12 +32,8 @@ function EventChecker(data: Event | CreateEventDTO) {
 export class EventService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(data: CreateEventDTO, user: User) {
+  async create(data: CreateEventDTO) {
     EventChecker(data);
-
-    if (!data.ownerID) {
-      data.ownerID = user.id;
-    }
 
     return await this.prismaService.event.create({
       data: {
@@ -45,9 +41,6 @@ export class EventService {
         createdAt: new Date(),
         updatedAt: new Date(),
         ...data,
-        users: {
-          connect: { id: user.id },
-        },
       },
     });
   }

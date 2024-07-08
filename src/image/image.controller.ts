@@ -17,7 +17,7 @@ import * as multer from 'multer';
 import { randomUUID } from 'crypto';
 import { join } from 'path';
 import { existsSync } from 'fs';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('image')
 export class ImageController {
@@ -54,7 +54,6 @@ export class ImageController {
     @UploadedFile()
     file: Express.Multer.File,
   ) {
-    console.log('file ', JSON.stringify(file));
     const imageOnDatabase = await this.imageService.create({
       id: randomUUID(),
       createdAt: new Date(),
@@ -70,7 +69,7 @@ export class ImageController {
   async getUserAvatar(@Param('imgpath') imgpath: string, @Res() res: Response) {
     const uploadsPath = process.env.UPLOADS_PATH;
     const path = join(uploadsPath, 'users', imgpath);
-    console.log(path);
+
     if (!existsSync(path)) {
       return res.status(404).send('Image not found.');
     }

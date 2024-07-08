@@ -68,15 +68,13 @@ describe('EventService', () => {
 
   it('should not be able to create a event if the name or start date are not provided', async () => {
     try {
-      const newEvent = await service.create(
-        {
-          ...testEvent,
-          name: null,
-          startDate: null,
-          visibility: 'PUBLIC',
-        },
-        mockUser,
-      );
+      const newEvent = await service.create({
+        ...testEvent,
+        ownerID: mockUser.id,
+        name: null,
+        startDate: null,
+        visibility: 'PUBLIC',
+      });
 
       expect(newEvent).toThrowErrorMatchingInlineSnapshot(
         "'Name and start date are required'",
@@ -90,14 +88,12 @@ describe('EventService', () => {
 
   it('should not be able to create a event if the start date or end date is not a valid date', async () => {
     try {
-      const newEvent = await service.create(
-        {
-          ...testEvent,
-          startDate: new Date('invalid date'),
-          visibility: 'PRIVATE',
-        },
-        mockUser,
-      );
+      const newEvent = await service.create({
+        ...testEvent,
+        ownerID: mockUser.id,
+        startDate: new Date('invalid date'),
+        visibility: 'PRIVATE',
+      });
 
       expect(newEvent).toThrowErrorMatchingInlineSnapshot(
         "'Start date must be a valid date'",
@@ -111,14 +107,12 @@ describe('EventService', () => {
 
   it('should not be able to create a event if the start date is in past', async () => {
     try {
-      const newEvent = await service.create(
-        {
-          ...testEvent,
-          startDate: new Date('2020-01-01'),
-          visibility: 'PUBLIC',
-        },
-        mockUser,
-      );
+      const newEvent = await service.create({
+        ...testEvent,
+        ownerID: mockUser.id,
+        startDate: new Date('2020-01-01'),
+        visibility: 'PUBLIC',
+      });
 
       expect(newEvent).toThrowErrorMatchingInlineSnapshot(
         "'Start date must be in the future'",
@@ -132,15 +126,13 @@ describe('EventService', () => {
 
   it('should not be able to create a event if the start date is later than the end date', async () => {
     try {
-      const newEvent = await service.create(
-        {
-          ...testEvent,
-          startDate: new Date('2022-01-01'),
-          endDate: new Date('2021-01-01'),
-          visibility: 'PUBLIC',
-        },
-        mockUser,
-      );
+      const newEvent = await service.create({
+        ...testEvent,
+        ownerID: mockUser.id,
+        startDate: new Date('2022-01-01'),
+        endDate: new Date('2021-01-01'),
+        visibility: 'PUBLIC',
+      });
 
       expect(newEvent).toThrowErrorMatchingInlineSnapshot(
         "'Start date must be before end date'",
@@ -153,7 +145,10 @@ describe('EventService', () => {
   });
 
   it('should be able to create a event', async () => {
-    const newEvent = await service.create(testEvent, mockUser);
+    const newEvent = await service.create({
+      ...testEvent,
+      ownerID: mockUser.id,
+    });
 
     expect(newEvent).toBeDefined();
   });

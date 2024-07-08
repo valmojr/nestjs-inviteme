@@ -27,18 +27,23 @@ export class EventController {
   private readonly logger = new Logger(EventController.name);
 
   @Post()
-  create(@Body() createEventDto: Event, @Req() req: Request) {
-    const { user } = this.jwtService.verify(
+  async create(@Body() createEventDto: Event, @Req() req: Request) {
+    const { user } = await this.jwtService.verifyAsync(
       req.headers.authorization?.split(' ')[1],
+      { secret: process.env.AUTH_SECRET },
     );
 
-    return this.eventService.create(createEventDto, user);
+    return this.eventService.create({
+      ...createEventDto,
+      ownerID: createEventDto.ownerID ? createEventDto.ownerID : user.id,
+    });
   }
 
   @Get()
   findAll(@Req() req: Request) {
     const user = this.jwtService.verify(
       req.headers.authorization?.split(' ')[1],
+      { secret: process.env.AUTH_SECRET },
     ) as User;
 
     return this.eventService.findAll(user.id);
