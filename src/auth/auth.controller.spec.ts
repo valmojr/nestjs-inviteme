@@ -115,7 +115,6 @@ describe('AuthController', () => {
 
       const result = await controller.discordLogin(code, mockResponse);
 
-      console.log('result => ', result);
       expect(result).toBeDefined();
       expect(result).toEqual(mockUser);
     });
