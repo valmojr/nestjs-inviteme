@@ -2,7 +2,6 @@ import { BadRequestException } from '@nestjs/common';
 import { House } from '@prisma/client';
 import { randomUUID } from 'crypto';
 import { Guild } from 'discord.js';
-import { HouseService } from 'src/house/house.service';
 
 export default function GuildParser(guild: Guild, isPublic?: boolean): House {
   if (isPublic === undefined) {
@@ -23,13 +22,4 @@ export default function GuildParser(guild: Guild, isPublic?: boolean): House {
     banner: guild.bannerURL(),
     public: isPublic,
   };
-}
-
-export async function GuildChecker(
-  guild: Guild,
-  houseService: HouseService,
-): Promise<House | false> {
-  const houseInDatabase = await houseService.findByDiscordId(guild.id);
-
-  return houseInDatabase;
 }
