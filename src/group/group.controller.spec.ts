@@ -4,7 +4,7 @@ import { GroupService } from './group.service';
 import { PrismaService } from '../prisma/prisma.service';
 import TestModuleBuilder from '../../test/test.module';
 import { UserService } from '../user/user.service';
-import { Group, User } from '@prisma/client';
+import { Event, Group, User } from '@prisma/client';
 import { randomUUID } from 'crypto';
 import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
@@ -40,6 +40,21 @@ describe('GroupController', () => {
     password: null,
   };
 
+  const testEvent: Event = {
+    id: randomUUID(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    name: 'testEvent',
+    mainGroupID: testGroup.id,
+    location: null,
+    description: null,
+    endDate: null,
+    ownerID: testUser.id,
+    startDate: new Date(),
+    thumbnailId: null,
+    visibility: 'PRIVATE',
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await (
       await TestModuleBuilder({
@@ -54,6 +69,7 @@ describe('GroupController', () => {
 
     service.create = jest.fn().mockResolvedValueOnce(testGroup);
     service.findAll = jest.fn().mockResolvedValueOnce([testGroup]);
+    service.findByEvent = jest.fn().mockResolvedValueOnce([testGroup]);
     service.findOne = jest.fn().mockResolvedValueOnce(testGroup);
     service.update = jest.fn().mockResolvedValueOnce({
       ...testGroup,
@@ -90,6 +106,18 @@ describe('GroupController', () => {
 
     expect(groups).toBeDefined();
     expect(groups).toBeInstanceOf(Array);
+    expect(groups).toEqual([testGroup]);
+  });
+
+  it('should be able to find a group by eventId', async () => {
+    const groups = await controller.findByEventId(testEvent.id);
+
+    expect(groups).toEqual([testGroup]);
+  });
+
+  it('should be able to find a group by event', async () => {
+    const groups = await controller.findByEvent(testEvent);
+
     expect(groups).toEqual([testGroup]);
   });
 

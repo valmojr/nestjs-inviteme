@@ -53,6 +53,16 @@ describe('RoleService', () => {
     expect(role).toHaveProperty('id');
   });
 
+  it('should not be able to create a role if nothing is provided', async () => {
+    try {
+      const role = await service.create(null);
+
+      expect(role).not.toBeDefined();
+    } catch (error) {
+      expect(error.message).toContain('Role ID is required');
+    }
+  });
+
   it('should find all roles', async () => {
     const roles = await service.findAll('123');
 
@@ -79,6 +89,16 @@ describe('RoleService', () => {
     expect(role.updatedAt).not.toEqual(testRole.updatedAt);
   });
 
+  it('should not be able to update a role if nothing is provided', async () => {
+    try {
+      const role = await service.update(null);
+
+      expect(role).not.toBeDefined();
+    } catch (error) {
+      expect(error.message).toContain('Role is required');
+    }
+  });
+
   it('should delete a role by id', async () => {
     const role = await service.remove(testRole.id);
 
@@ -89,5 +109,15 @@ describe('RoleService', () => {
     const role = await service.remove(testRole);
 
     expect(role).toHaveProperty('id');
+  });
+
+  it('should not be able to remove a role if nothing is provided', async () => {
+    try {
+      const role = await service.remove(null);
+
+      expect(role).not.toBeDefined();
+    } catch (error) {
+      expect(error.message).toContain('Role is required');
+    }
   });
 });

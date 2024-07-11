@@ -68,6 +68,11 @@ export class HouseService {
   }
 
   async upsertByDiscord(data: House) {
+    if (!data.discordId) {
+      throw new BadRequestException(
+        'Discord Id is required to upsert by discord id',
+      );
+    }
     return await this.prismaService.house.upsert({
       where: {
         discordId: data.discordId,
@@ -105,10 +110,13 @@ export class HouseService {
     });
   }
 
-  async addUser(userOrUserId: User | string, houseDiscordId: string) {
+  async addUser(userOrUserId: User | string, houseDiscordId: House | string) {
     return await this.prismaService.house.update({
       where: {
-        discordId: houseDiscordId,
+        discordId:
+          typeof houseDiscordId === 'string'
+            ? houseDiscordId
+            : houseDiscordId.discordId,
       },
       data: {
         users: {

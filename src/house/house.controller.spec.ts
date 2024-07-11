@@ -54,12 +54,14 @@ describe('HouseController', () => {
 
     service.create = jest.fn().mockResolvedValueOnce(testHouse);
     service.findAll = jest.fn().mockResolvedValueOnce([testHouse]);
+    service.findPartial = jest.fn().mockReturnValueOnce([testHouse]);
     service.findOne = jest.fn().mockResolvedValueOnce(testHouse);
     service.update = jest.fn().mockResolvedValueOnce({
       ...testHouse,
       updatedAt: new Date(),
       name: 'Updated House',
     });
+    service.findUsers = jest.fn().mockReturnValueOnce([testUser]);
     service.remove = jest.fn().mockResolvedValueOnce({
       ...testHouse,
       name: 'Deleted House',
@@ -92,6 +94,12 @@ describe('HouseController', () => {
     expect(houses).toBeInstanceOf(Array);
   });
 
+  it('should be able to find a house by part of it', async () => {
+    const houses = await controller.findPartial('h');
+
+    expect(houses).toContain(testHouse);
+  });
+
   it('should be able to find a house by id', async () => {
     const house = await controller.findOne(testHouse.id);
 
@@ -103,6 +111,13 @@ describe('HouseController', () => {
 
     expect(house).toBeDefined();
     expect(house.name).toBe('Updated House');
+  });
+
+  it('should be able to find the house users', async () => {
+    const users = await controller.findUsers(testHouse.id);
+
+    expect(users).toBeInstanceOf(Array);
+    expect(users).toContain(testUser);
   });
 
   it('should be able to update a house by object', async () => {

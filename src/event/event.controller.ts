@@ -50,12 +50,12 @@ export class EventController {
   }
 
   @Get('house/:id')
-  findByHouse(@Param('id') id: string) {
+  findByHouseId(@Param('id') id: string) {
     return this.eventService.findByHouse(id);
   }
 
   @Get('house')
-  findByUser(@Body() house: House) {
+  findByHouse(@Body() house: House) {
     return this.eventService.findByHouse(house);
   }
 

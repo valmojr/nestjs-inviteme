@@ -37,6 +37,7 @@ describe('UserController', () => {
 
     service.create = jest.fn().mockResolvedValueOnce(testUser);
     service.findAll = jest.fn().mockResolvedValueOnce([testUser]);
+    service.findPartial = jest.fn().mockResolvedValueOnce([testUser]);
     service.findOne = jest.fn().mockResolvedValueOnce(testUser);
     service.update = jest.fn().mockResolvedValueOnce({
       ...testUser,
@@ -57,6 +58,13 @@ describe('UserController', () => {
     const user = await controller.create(testUser);
 
     expect(user).toBeDefined();
+  });
+
+  it('should be able to find a user by part of it', async () => {
+    const users = await controller.findPartial('user');
+
+    expect(users).toBeInstanceOf(Array);
+    expect(users).toContain(testUser);
   });
 
   it('should be able to findAll users', async () => {

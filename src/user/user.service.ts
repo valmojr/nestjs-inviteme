@@ -7,11 +7,9 @@ import { User } from '@prisma/client';
 export class UserService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(
-    data: Omit<User, 'id' | 'createdAt' | 'updatedAt' | 'discordId'>,
-  ) {
+  async create(data: User) {
     if (!data) {
-      throw new BadRequestException('Role ID is required');
+      throw new BadRequestException('User is required');
     }
     return await this.prismaService.user.create({
       data: {
@@ -65,7 +63,7 @@ export class UserService {
 
   async update(data: User) {
     if (!data) {
-      throw new BadRequestException('Role ID is required');
+      throw new BadRequestException('User is required');
     }
     return await this.prismaService.user.update({
       where: {
@@ -93,7 +91,7 @@ export class UserService {
 
   async remove(data: string | User) {
     if (!data) {
-      throw new BadRequestException('Role ID is required');
+      throw new BadRequestException('User is required');
     }
     return await this.prismaService.user.delete({
       where: {

@@ -10,9 +10,7 @@ export class RoleService {
       throw new BadRequestException('Role ID is required');
     }
     return await this.prismaService.role.create({
-      data: {
-        ...data,
-      },
+      data,
     });
   }
 
@@ -32,7 +30,7 @@ export class RoleService {
 
   async update(data: Role) {
     if (!data) {
-      throw new BadRequestException('Role ID is required');
+      throw new BadRequestException('Role is required');
     }
     return await this.prismaService.role.update({
       where: {
@@ -44,7 +42,7 @@ export class RoleService {
 
   async remove(data: string | Role) {
     if (!data) {
-      throw new BadRequestException('Role ID is required');
+      throw new BadRequestException('Role is required');
     }
     return await this.prismaService.role.delete({
       where: {

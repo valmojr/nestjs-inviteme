@@ -4,9 +4,11 @@ import { RoleService } from './role.service';
 import { PrismaService } from '../prisma/prisma.service';
 import TestModuleBuilder from '../../test/test.module';
 import { UserService } from '../user/user.service';
-import { Role } from '@prisma/client';
+import { Role, User } from '@prisma/client';
 import { randomUUID } from 'crypto';
 import { JwtService } from '@nestjs/jwt';
+import { createRequest } from 'node-mocks-http';
+import { Request } from 'express';
 
 describe('RoleController', () => {
   let controller: RoleController;
@@ -22,6 +24,21 @@ describe('RoleController', () => {
     userId: null,
     groupID: null,
   };
+
+  const testUser: User = {
+    id: randomUUID(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    username: 'testUser',
+    displayName: 'testUser',
+    discordId: null,
+    banner: null,
+    bannerColor: null,
+    avatarId: null,
+    email: null,
+    password: null,
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await (
       await TestModuleBuilder({
@@ -47,11 +64,7 @@ describe('RoleController', () => {
       name: 'deleted role',
     });
 
-    jwtService.verify = jest.fn().mockReturnValueOnce({
-      id: 'test-user-id',
-      username: 'user',
-      displayName: 'User',
-    });
+    jwtService.verify = jest.fn().mockReturnValueOnce(testUser);
   });
 
   it('should be defined', () => {
@@ -62,6 +75,20 @@ describe('RoleController', () => {
     const role = await controller.create(testRole);
 
     expect(role).toBeDefined();
+  });
+
+  it('should be able to find all available roles', async () => {
+    const request: Request = createRequest<any>({
+      method: 'GET',
+      headers: {
+        authorization: 'bearer token',
+      },
+    }) as Request;
+
+    const houses = await controller.findAll(request);
+
+    expect(houses).toBeDefined();
+    expect(houses).toBeInstanceOf(Array);
   });
 
   it('should be able to find one Role', async () => {

@@ -3,7 +3,7 @@ import { EventService } from './event.service';
 import { PrismaService } from '../prisma/prisma.service';
 import TestModuleBuilder from '../../test/test.module';
 import { randomUUID } from 'crypto';
-import { Event, User } from '@prisma/client';
+import { Event, House, User } from '@prisma/client';
 
 describe('EventService', () => {
   let service: EventService;
@@ -22,6 +22,17 @@ describe('EventService', () => {
     mainGroupID: null,
     ownerID: null,
     visibility: 'PUBLIC',
+  };
+
+  const testHouse: House = {
+    id: randomUUID(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    name: 'testHouse',
+    avatar: null,
+    public: false,
+    discordId: null,
+    banner: null,
   };
 
   const mockUser: User = {
@@ -199,6 +210,20 @@ describe('EventService', () => {
     expect(allEvents.length).toBe(1);
   });
 
+  it('should be able to get a event by a house id', async () => {
+    prisma.event.findMany = jest.fn().mockReturnValueOnce(testEvent);
+    const event = await service.findByHouse(testHouse.id);
+
+    expect(event).toEqual(testEvent);
+  });
+
+  it('should be able to get a event by a house object', async () => {
+    prisma.event.findMany = jest.fn().mockReturnValueOnce(testEvent);
+    const event = await service.findByHouse(testHouse);
+
+    expect(event).toEqual(testEvent);
+  });
+
   it('should be able to get one event by id', async () => {
     const testId = randomUUID();
 
@@ -219,6 +244,24 @@ describe('EventService', () => {
     expect(oneEvent).toBeDefined();
     expect(oneEvent.name).toBe('Event Done!');
     expect(oneEvent.id).toBe(testId);
+  });
+
+  it('should not be able to get a event by if the id is null or invalid', async () => {
+    try {
+      const event = await service.findOne(null);
+
+      expect(event).not.toBeDefined();
+    } catch (error) {
+      expect(error.message).toContain('Event ID is required');
+    }
+  });
+
+  it('should be able to get a event by part of the event name', async () => {
+    prisma.event.findMany = jest.fn().mockReturnValueOnce([testEvent]);
+
+    const event = await service.findPartial('a');
+
+    expect(event).toEqual([testEvent]);
   });
 
   it('should be able to get one event by event object', async () => {
@@ -336,5 +379,15 @@ describe('EventService', () => {
     expect(deletedEvent).toBeDefined();
     expect(deletedEvent.name).toBe('Event Deleted!');
     expect(deletedEvent.id).toBe(testId);
+  });
+
+  it('should not be able to remove a event if no event or event id is provided', async () => {
+    try {
+      const event = await service.remove(null);
+
+      expect(event).not.toBeDefined();
+    } catch (error) {
+      expect(error.message).toContain('Event ID is required');
+    }
   });
 });

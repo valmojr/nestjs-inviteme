@@ -4,7 +4,7 @@ import { EventService } from './event.service';
 import { PrismaService } from '../prisma/prisma.service';
 import TestModuleBuilder from '../../test/test.module';
 import { UserService } from '../user/user.service';
-import { Event, User } from '@prisma/client';
+import { Event, House, User } from '@prisma/client';
 import { randomUUID } from 'crypto';
 import { JwtService } from '@nestjs/jwt';
 import { createRequest } from 'node-mocks-http';
@@ -16,21 +16,6 @@ describe('EventController', () => {
   let jwtService: JwtService;
 
   let token: string;
-
-  const testEvent: Event = {
-    id: randomUUID(),
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    name: 'Test Event',
-    startDate: new Date(),
-    endDate: null,
-    thumbnailId: null,
-    mainGroupID: null,
-    ownerID: null,
-    location: null,
-    description: null,
-    visibility: 'PUBLIC',
-  };
 
   const testUser: User = {
     id: randomUUID(),
@@ -44,6 +29,32 @@ describe('EventController', () => {
     avatarId: null,
     email: null,
     password: null,
+  };
+
+  const testEvent: Event = {
+    id: randomUUID(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    name: 'Test Event',
+    startDate: new Date(),
+    endDate: null,
+    thumbnailId: null,
+    mainGroupID: null,
+    ownerID: testUser.id,
+    location: null,
+    description: null,
+    visibility: 'PUBLIC',
+  };
+
+  const testHouse: House = {
+    id: randomUUID(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    name: 'testHouse',
+    avatar: null,
+    public: false,
+    discordId: null,
+    banner: null,
   };
 
   beforeEach(async () => {
@@ -65,6 +76,8 @@ describe('EventController', () => {
 
     service.create = jest.fn().mockResolvedValueOnce(testEvent);
     service.findAll = jest.fn().mockResolvedValueOnce([testEvent]);
+    service.findByHouse = jest.fn().mockResolvedValue([testEvent]);
+    service.findPartial = jest.fn().mockResolvedValue([testEvent]);
     service.findOne = jest.fn().mockResolvedValueOnce(testEvent);
     service.update = jest.fn().mockResolvedValueOnce({
       ...testEvent,
@@ -94,6 +107,46 @@ describe('EventController', () => {
     const event = await controller.create(testEvent, request);
 
     expect(event).toEqual(testEvent);
+  });
+
+  it('should be able to create a event using the creator id as event owner id if the ownerId is not provided', async () => {
+    jwtService.verify = jest.fn().mockResolvedValueOnce(testUser);
+
+    const request: Request = createRequest<any>({
+      method: 'POST',
+      headers: {
+        authorization: `bearer ${token}`,
+      },
+    }) as Request;
+
+    const event = await controller.create(
+      { ...testEvent, ownerID: null },
+      request,
+    );
+
+    expect(event).toEqual(testEvent);
+    expect(event.ownerID).toEqual(testUser.id);
+  });
+
+  it('should be able to find a event by a house id', async () => {
+    const event = await controller.findByHouseId(testHouse.id);
+
+    expect(event).toBeDefined();
+    expect(event).toEqual([testEvent]);
+  });
+
+  it('should be able to find a event by a house object', async () => {
+    const event = await controller.findByHouse(testHouse);
+
+    expect(event).toBeDefined();
+    expect(event).toEqual([testEvent]);
+  });
+
+  it('should be able to find a event by half of the event name', async () => {
+    const event = await controller.findPartial(testEvent.name.split('a')[0]);
+
+    expect(event).toBeDefined();
+    expect(event).toEqual([testEvent]);
   });
 
   it('should be able to find all events', async () => {

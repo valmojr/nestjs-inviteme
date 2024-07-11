@@ -60,6 +60,13 @@ describe('GroupService', () => {
     expect(groups).toBeInstanceOf(Array);
   });
 
+  it('should find groups by event id', async () => {
+    prisma.group.findMany = jest.fn().mockResolvedValueOnce([testGroup]);
+    const groups = await service.findByEvent('eventId');
+
+    expect(groups).toEqual([testGroup]);
+  });
+
   it('should find group by id', async () => {
     const foundGroup = await service.findOne(testGroup.id);
 
@@ -96,5 +103,15 @@ describe('GroupService', () => {
 
     expect(removedGroup).toHaveProperty('id');
     expect(removedGroup.name).toBe('Removed Group');
+  });
+
+  it('should not be able to remove a group if nothing is provided', async () => {
+    try {
+      const event = await service.remove(null);
+
+      expect(event).not.toBeDefined();
+    } catch (error) {
+      expect(error.message).toContain('Group ID is required');
+    }
   });
 });

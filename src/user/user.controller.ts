@@ -20,9 +20,9 @@ export class UserController {
   @Post()
   create(
     @Body()
-    createUserDto: Omit<User, 'id' | 'createdAt' | 'updatedAt'>,
+    data: User,
   ) {
-    return this.userService.create(createUserDto);
+    return this.userService.create(data);
   }
 
   @Get()

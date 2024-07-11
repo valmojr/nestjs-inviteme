@@ -125,7 +125,8 @@
       "/src/house/house.module.ts",
       "/src/role/role.module.ts",
       "/src/user/user.module.ts",
-      "/src/discord/discord.module.ts"
+      "/src/discord/discord.module.ts",
+      "/src/image/image.module.ts"
     ]
   }
 }
