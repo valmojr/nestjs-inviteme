@@ -8,7 +8,7 @@ import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { DiscordAccessToken } from 'src/util/AccessToken';
 import { Response } from 'express';
-import { DiscordUserParser } from '../util/UserParser';
+import { DiscordUserParser } from '../util/DiscordUserParser';
 import { User } from '@prisma/client';
 
 @Injectable()

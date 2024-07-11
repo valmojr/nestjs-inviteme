@@ -14,7 +14,7 @@ import { HouseService } from '../house/house.service';
 import { RoleService } from '../role/role.service';
 import { UserService } from '../user/user.service';
 import GuildParser from '../util/GuildParser';
-import { DiscordUserParser } from '../util/UserParser';
+import { DiscordUserParser } from '../util/DiscordUserParser';
 
 @Injectable()
 export class DiscordService {
