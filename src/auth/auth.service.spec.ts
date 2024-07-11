@@ -6,7 +6,7 @@ import TestModuleBuilder from '../../test/test.module';
 import { randomUUID } from 'crypto';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
-import { Response } from 'express';
+import { createResponse } from 'node-mocks-http';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -108,29 +108,35 @@ describe('AuthService', () => {
   });
 
   describe('Discord OAuth2 Method Tests', () => {
-    const validCode: string = 'validCode';
-    const invalidCode: string = 'invalidCode';
-    let response: Response;
+    const code = 'mock_code';
+    const mockResponse = createResponse();
+    const mockUserData = testUser;
 
-    beforeEach(() => {});
+    beforeEach(async () => {
+      global.fetch = jest.fn().mockResolvedValueOnce(mockResponse);
+      global.fetch = jest
+        .fn()
+        .mockResolvedValueOnce(JSON.stringify(mockUserData));
+    });
+
     it('should throw error if no code is provided', async () => {
-      const testedResponse = service.discordOAuthCallback(null, response);
+      const testedResponse = service.discordOAuthCallback(null, mockResponse);
 
-      expect(testedResponse).toBeDefined();
+      expect(testedResponse).toThrowErrorMatchingInlineSnapshot(
+        'Failed to get access token',
+      );
     });
 
     it('should throw error if the code provided is invalid', async () => {
-      const testedResponse = service.discordOAuthCallback(
-        invalidCode,
-        response,
-      );
+      const testedResponse = service.discordOAuthCallback(code, mockResponse);
 
-      expect(testedResponse).toBeDefined();
+      expect(testedResponse).not.toBeDefined();
     });
 
     it('should return a valid response if the provided code is valid', async () => {
-      const testedResponse = service.discordOAuthCallback(validCode, response);
+      const testedResponse = service.discordOAuthCallback(code, mockResponse);
 
+      expect(testedResponse).not.toThrow();
       expect(testedResponse).toBeDefined();
     });
   });
