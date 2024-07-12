@@ -10,9 +10,10 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from '@prisma/client';
-import { AuthGuard } from '../auth/auth.guard';
+import { BearerGuard } from '../auth/bearer.guard';
+import { CreateUserDTO, UpdateUserDTO } from './user.entity';
 
-@UseGuards(AuthGuard)
+@UseGuards(BearerGuard)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -20,7 +21,7 @@ export class UserController {
   @Post()
   create(
     @Body()
-    data: User,
+    data: CreateUserDTO,
   ) {
     return this.userService.create(data);
   }
@@ -41,12 +42,12 @@ export class UserController {
   }
 
   @Patch(':id')
-  updateById(@Param('id') id: string, @Body() updateUserDto: User) {
+  updateById(@Param('id') id: string, @Body() updateUserDto: UpdateUserDTO) {
     return this.userService.update(updateUserDto);
   }
 
   @Patch()
-  update(@Body() updateUserDto: User) {
+  update(@Body() updateUserDto: UpdateUserDTO) {
     return this.userService.update(updateUserDto);
   }
 

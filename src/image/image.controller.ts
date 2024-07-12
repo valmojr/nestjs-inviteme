@@ -17,7 +17,7 @@ import * as multer from 'multer';
 import { randomUUID } from 'crypto';
 import { join } from 'path';
 import { existsSync } from 'fs';
-import { AuthGuard } from '../auth/auth.guard';
+import { BearerGuard } from '../auth/bearer.guard';
 
 @Controller('image')
 export class ImageController {
@@ -64,7 +64,7 @@ export class ImageController {
     return { message: 'Avatar sent fine!', filename: imageOnDatabase.filepath };
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(BearerGuard)
   @Get('upload/avatar/:imgpath')
   async getUserAvatar(@Param('imgpath') imgpath: string, @Res() res: Response) {
     const uploadsPath = process.env.UPLOADS_PATH;

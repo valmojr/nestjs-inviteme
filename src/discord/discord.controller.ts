@@ -1,9 +1,9 @@
 import { Controller, UseGuards } from '@nestjs/common';
 import { DiscordService } from './discord.service';
-import { AuthGuard } from '../auth/auth.guard';
+import { BearerGuard } from '../auth/bearer.guard';
 import { DiscordUpdate } from './discord.update.service';
 
-@UseGuards(AuthGuard)
+@UseGuards(BearerGuard)
 @Controller('discord')
 export class DiscordController {
   constructor(

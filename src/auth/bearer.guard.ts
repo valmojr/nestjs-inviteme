@@ -11,7 +11,7 @@ import { UserService } from '../user/user.service';
 import * as jwt from 'jsonwebtoken';
 
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class BearerGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
     private userService: UserService,

@@ -1,6 +1,6 @@
 import { TestingModule } from '@nestjs/testing';
 import TestModuleBuilder from '../../test/test.module';
-import { AuthGuard } from './auth.guard';
+import { BearerGuard } from './bearer.guard';
 import { UserService } from '../user/user.service';
 import { User } from '@prisma/client';
 import { randomUUID } from 'crypto';
@@ -12,7 +12,7 @@ import * as jwt from 'jsonwebtoken';
 
 describe('Auth Guard Tests', () => {
   let userService: UserService;
-  let guard: AuthGuard;
+  let guard: BearerGuard;
   let jwtService: JwtService;
 
   const mockUser: User = {
@@ -53,12 +53,12 @@ describe('Auth Guard Tests', () => {
             signOptions: { expiresIn: '1d' },
           }),
         ],
-        providers: [PrismaService, AuthService, AuthGuard, UserService],
+        providers: [PrismaService, AuthService, BearerGuard, UserService],
       })
     ).compile();
 
     userService = module.get<UserService>(UserService);
-    guard = module.get<AuthGuard>(AuthGuard);
+    guard = module.get<BearerGuard>(BearerGuard);
     jwtService = module.get<JwtService>(JwtService);
   });
 

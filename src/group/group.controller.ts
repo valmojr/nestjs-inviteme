@@ -11,12 +11,12 @@ import {
 } from '@nestjs/common';
 import { GroupService } from './group.service';
 import { Event, Group } from '@prisma/client';
-import { AuthGuard } from '../auth/auth.guard';
+import { BearerGuard } from '../auth/bearer.guard';
 import UserParser from '../util/UserParser';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 
-@UseGuards(AuthGuard)
+@UseGuards(BearerGuard)
 @Controller('group')
 export class GroupController {
   constructor(

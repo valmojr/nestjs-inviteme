@@ -11,12 +11,12 @@ import {
 } from '@nestjs/common';
 import { HouseService } from './house.service';
 import { House } from '@prisma/client';
-import { AuthGuard } from '../auth/auth.guard';
+import { BearerGuard } from '../auth/bearer.guard';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import UserParser from '../util/UserParser';
 
-@UseGuards(AuthGuard)
+@UseGuards(BearerGuard)
 @Controller('house')
 export class HouseController {
   constructor(

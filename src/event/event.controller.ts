@@ -12,11 +12,11 @@ import {
 } from '@nestjs/common';
 import { EventService } from './event.service';
 import { Event, House, User } from '@prisma/client';
-import { AuthGuard } from '../auth/auth.guard';
+import { BearerGuard } from '../auth/bearer.guard';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 
-@UseGuards(AuthGuard)
+@UseGuards(BearerGuard)
 @Controller('event')
 export class EventController {
   constructor(
