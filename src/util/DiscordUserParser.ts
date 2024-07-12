@@ -11,8 +11,6 @@ export async function DiscordUserParser(
 
   return await userService.upsertByDiscord({
     id: userOnDatabase?.id || `${randomUUID()}`,
-    createdAt: userOnDatabase?.createdAt || new Date(),
-    updatedAt: new Date(),
     discordId: discordUser.id,
     username: discordUser.username,
     displayName: discordUser.displayName,

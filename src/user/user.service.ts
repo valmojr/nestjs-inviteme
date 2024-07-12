@@ -2,12 +2,13 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { randomUUID } from 'crypto';
 import { User } from '@prisma/client';
+import { CreateUserDTO, UpdateUserDTO } from './user.entity';
 
 @Injectable()
 export class UserService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(data: User) {
+  async create(data: CreateUserDTO) {
     if (!data) {
       throw new BadRequestException('User is required');
     }
@@ -61,7 +62,7 @@ export class UserService {
     });
   }
 
-  async update(data: User) {
+  async update(data: UpdateUserDTO) {
     if (!data) {
       throw new BadRequestException('User is required');
     }
@@ -73,7 +74,7 @@ export class UserService {
     });
   }
 
-  async upsert(data: User) {
+  async upsert(data: UpdateUserDTO) {
     return await this.prismaService.user.upsert({
       where: { id: data.id },
       update: { ...data, updatedAt: new Date() },
@@ -81,7 +82,7 @@ export class UserService {
     });
   }
 
-  async upsertByDiscord(data: User): Promise<User> {
+  async upsertByDiscord(data: UpdateUserDTO): Promise<User> {
     return await this.prismaService.user.upsert({
       where: { discordId: data.discordId },
       update: { ...data, updatedAt: new Date() },
