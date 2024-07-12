@@ -8,6 +8,7 @@ import { ExecutionContext } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
+import * as jwt from 'jsonwebtoken';
 
 describe('Auth Guard Tests', () => {
   let userService: UserService;
@@ -132,5 +133,30 @@ describe('Auth Guard Tests', () => {
 
     const authorization = await guard.canActivate(executionContext);
     expect(authorization).toBeTruthy();
+  });
+
+  it('should throw a token expired error if matches the case', async () => {
+    jwtService.verifyAsync = jest
+      .fn()
+      .mockRejectedValueOnce(
+        new jwt.TokenExpiredError('token expired', new Date()),
+      );
+
+    executionContext.switchToHttp().getRequest = jest.fn().mockReturnValue({
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: 'Bearer valid_token',
+      },
+    });
+
+    try {
+      const authorization = await guard.canActivate(executionContext);
+
+      expect(authorization).rejects.toThrowErrorMatchingInlineSnapshot(
+        `"Token expired, please login again"`,
+      );
+    } catch (error) {
+      expect(error.message).toContain('Token expired, please login again');
+    }
   });
 });
