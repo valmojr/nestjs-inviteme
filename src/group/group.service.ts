@@ -1,12 +1,13 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Group } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { CreateGroupDTO, UpdateGroupDTO } from './group.entity';
 
 @Injectable()
 export class GroupService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(group: Group) {
+  async create(group: CreateGroupDTO) {
     return await this.prismaService.group.create({
       data: {
         ...group,
@@ -36,14 +37,13 @@ export class GroupService {
     });
   }
 
-  async update(group: Group) {
+  async update(group: UpdateGroupDTO) {
     return await this.prismaService.group.update({
       where: {
         id: group.id,
       },
       data: {
         ...group,
-        updatedAt: new Date(),
       },
     });
   }

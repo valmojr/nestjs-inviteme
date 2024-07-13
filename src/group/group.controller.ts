@@ -15,6 +15,7 @@ import { BearerGuard } from '../auth/bearer.guard';
 import UserParser from '../util/UserParser';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
+import { CreateGroupDTO, UpdateGroupDTO } from './group.entity';
 
 @UseGuards(BearerGuard)
 @Controller('group')
@@ -25,7 +26,7 @@ export class GroupController {
   ) {}
 
   @Post()
-  create(@Body() createGroupDto: Group) {
+  create(@Body() createGroupDto: CreateGroupDTO) {
     return this.groupService.create(createGroupDto);
   }
 
@@ -54,12 +55,12 @@ export class GroupController {
   }
 
   @Patch(':id')
-  updateById(@Param('id') id: string, @Body() updateGroupDto: Group) {
+  updateById(@Param('id') id: string, @Body() updateGroupDto: UpdateGroupDTO) {
     return this.groupService.update({ ...updateGroupDto, id });
   }
 
   @Patch()
-  update(@Body() updateGroupDto: Group) {
+  update(@Body() updateGroupDto: UpdateGroupDTO) {
     return this.groupService.update(updateGroupDto);
   }
 
@@ -69,7 +70,7 @@ export class GroupController {
   }
 
   @Delete()
-  remove(@Body() removeGroupDto: Group) {
+  remove(@Body() removeGroupDto: Group | UpdateGroupDTO) {
     return this.groupService.remove(removeGroupDto.id);
   }
 }
