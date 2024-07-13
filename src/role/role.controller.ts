@@ -9,10 +9,10 @@ import {
   Req,
 } from '@nestjs/common';
 import { RoleService } from './role.service';
-import { Role } from '@prisma/client';
 import { Request } from 'express';
 import UserParser from '../util/UserParser';
 import { JwtService } from '@nestjs/jwt';
+import { CreateRoleDTO, UpdateRoleDTO } from './role.entity';
 
 @Controller('role')
 export class RoleController {
@@ -22,7 +22,7 @@ export class RoleController {
   ) {}
 
   @Post()
-  create(@Body() data: Role) {
+  create(@Body() data: CreateRoleDTO) {
     return this.roleService.create(data);
   }
 
@@ -41,12 +41,12 @@ export class RoleController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() data: Role) {
+  update(@Param('id') id: string, @Body() data: UpdateRoleDTO) {
     return this.roleService.update({ id, ...data });
   }
 
   @Patch()
-  updateOne(@Body() data: Role) {
+  updateOne(@Body() data: UpdateRoleDTO) {
     return this.roleService.update(data);
   }
 
@@ -56,7 +56,7 @@ export class RoleController {
   }
 
   @Delete()
-  removeOne(@Body() data: Role) {
+  removeOne(@Body() data: UpdateRoleDTO) {
     return this.roleService.remove(data);
   }
 }

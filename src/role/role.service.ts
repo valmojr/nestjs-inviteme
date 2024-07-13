@@ -1,11 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Role } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { CreateRoleDTO, UpdateRoleDTO } from './role.entity';
 
 @Injectable()
 export class RoleService {
   constructor(private readonly prismaService: PrismaService) {}
-  async create(data: Role) {
+  async create(data: CreateRoleDTO) {
     if (!data) {
       throw new BadRequestException('Role ID is required');
     }
@@ -20,7 +21,7 @@ export class RoleService {
     });
   }
 
-  async findOne(data: string | Role) {
+  async findOne(data: string | Role | UpdateRoleDTO) {
     return await this.prismaService.role.findUnique({
       where: {
         id: typeof data === 'string' ? data : data.id,
@@ -28,7 +29,7 @@ export class RoleService {
     });
   }
 
-  async update(data: Role) {
+  async update(data: Role | UpdateRoleDTO) {
     if (!data) {
       throw new BadRequestException('Role is required');
     }
@@ -40,7 +41,7 @@ export class RoleService {
     });
   }
 
-  async remove(data: string | Role) {
+  async remove(data: string | Role | UpdateRoleDTO) {
     if (!data) {
       throw new BadRequestException('Role is required');
     }
