@@ -209,6 +209,13 @@ describe('HouseService', () => {
     expect(house.name).toBe('Removed House');
   });
 
+  it('should be able to remove a house by discord id with object', async () => {
+    const house = await service.removeByDiscordId(testHouse);
+
+    expect(house).toHaveProperty('id');
+    expect(house.name).toBe('Removed House');
+  });
+
   it('should be able to add users to houses with both objects', async () => {
     const house = await service.addUser(testUser, testHouse);
 

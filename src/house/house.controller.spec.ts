@@ -135,7 +135,7 @@ describe('HouseController', () => {
   });
 
   it('should be able to remove a event by object', async () => {
-    const house = await controller.remove(testHouse.id);
+    const house = await controller.remove(testHouse);
 
     expect(house).toBeDefined();
     expect(house.name).toBe('Deleted House');

@@ -1,12 +1,13 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { House, User } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { CreateHouseDTO, UpdateHouseDTO } from './house.entity';
 
 @Injectable()
 export class HouseService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(data: House) {
+  async create(data: CreateHouseDTO) {
     return await this.prismaService.house.create({
       data: {
         ...data,
@@ -57,7 +58,7 @@ export class HouseService {
     });
   }
 
-  async upsert(data: House) {
+  async upsert(data: House | UpdateHouseDTO) {
     return await this.prismaService.house.upsert({
       where: {
         id: data.id,
@@ -67,7 +68,7 @@ export class HouseService {
     });
   }
 
-  async upsertByDiscord(data: House) {
+  async upsertByDiscord(data: House | UpdateHouseDTO) {
     if (!data.discordId) {
       throw new BadRequestException(
         'Discord Id is required to upsert by discord id',
@@ -82,7 +83,7 @@ export class HouseService {
     });
   }
 
-  async update(data: House) {
+  async update(data: UpdateHouseDTO) {
     return await this.prismaService.house.update({
       where: {
         id: data.id,
@@ -91,7 +92,7 @@ export class HouseService {
     });
   }
 
-  async remove(data: string | House) {
+  async remove(data: string | House | UpdateHouseDTO) {
     if (!data) {
       throw new BadRequestException('House info is required');
     }
@@ -102,10 +103,10 @@ export class HouseService {
     });
   }
 
-  async removeByDiscordId(discordId: string) {
+  async removeByDiscordId(data: string | House | UpdateHouseDTO) {
     return await this.prismaService.house.delete({
       where: {
-        discordId: discordId,
+        discordId: typeof data === 'string' ? data : data.discordId,
       },
     });
   }

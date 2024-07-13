@@ -15,6 +15,7 @@ import { BearerGuard } from '../auth/bearer.guard';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import UserParser from '../util/UserParser';
+import { CreateHouseDTO, UpdateHouseDTO } from './house.entity';
 
 @UseGuards(BearerGuard)
 @Controller('house')
@@ -25,7 +26,7 @@ export class HouseController {
   ) {}
 
   @Post()
-  create(@Body() data: House) {
+  create(@Body() data: CreateHouseDTO) {
     return this.houseService.create(data);
   }
 
@@ -54,12 +55,12 @@ export class HouseController {
   }
 
   @Patch(':id')
-  updateById(@Param('id') id: string, @Body() data: House) {
+  updateById(@Param('id') id: string, @Body() data: UpdateHouseDTO) {
     return this.houseService.update({ ...data, id });
   }
 
   @Patch()
-  update(@Body() data: House) {
+  update(@Body() data: UpdateHouseDTO) {
     return this.houseService.update(data);
   }
 
@@ -69,7 +70,7 @@ export class HouseController {
   }
 
   @Delete()
-  remove(@Body() data: string) {
-    return this.houseService.remove(data);
+  remove(@Body() data: House | UpdateHouseDTO) {
+    return this.houseService.remove(data.id);
   }
 }
