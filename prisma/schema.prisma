@@ -37,8 +37,8 @@ model Role {
   groupID   String?
   eventID   String?
   event     Event?   @relation(fields: [eventID], references: [id])
-  group     Group?   @relation(fields: [groupID], references: [id], onDelete: Cascade)
-  user      User?    @relation(fields: [userId], references: [id], onDelete: SetDefault)
+  group     Group?   @relation(fields: [groupID], references: [id])
+  user      User?    @relation(fields: [userId], references: [id])
 }
 
 model Group {
@@ -51,8 +51,8 @@ model Group {
   eventID              String
   thumbnailId          String?
   isFatherGroupOfEvent Event?   @relation("fatherGroupToEvent")
-  event                Event    @relation("GroupsToEvent", fields: [eventID], references: [id], onDelete: Cascade)
-  fatherGroup          Group?   @relation("GroupToFatherGroup", fields: [fatherGroupID], references: [id], onDelete: Cascade)
+  event                Event    @relation("GroupsToEvent", fields: [eventID], references: [id])
+  fatherGroup          Group?   @relation("GroupToFatherGroup", fields: [fatherGroupID], references: [id])
   childGroups          Group[]  @relation("GroupToFatherGroup")
   roles                Role[]
   users                User[]   @relation("GroupToUser")
