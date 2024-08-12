@@ -1,6 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Event } from '@prisma/client';
-import { randomUUID } from 'crypto';
 import {
   Guild,
   GuildMember,
@@ -15,6 +13,7 @@ import { RoleService } from '../role/role.service';
 import { UserService } from '../user/user.service';
 import GuildParser from '../util/GuildParser';
 import { DiscordUserParser } from '../util/DiscordUserParser';
+import { CreateEventDTO } from 'src/event/event.entity';
 
 @Injectable()
 export class DiscordService {
@@ -73,9 +72,6 @@ export class DiscordService {
 
   public async DiscordEventCreation(guildScheduledEvent: GuildScheduledEvent) {
     let role = await this.roleService.create({
-      id: randomUUID(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
       name: 'Owner',
       userId: guildScheduledEvent.creatorId,
       groupID: null,
@@ -83,9 +79,6 @@ export class DiscordService {
     });
 
     let group = await this.groupService.create({
-      id: randomUUID(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
       fatherGroupID: null,
       eventID: null,
       name: 'main',
@@ -101,10 +94,7 @@ export class DiscordService {
       this.userService,
     );
 
-    const event: Event = {
-      id: randomUUID(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
+    const event: CreateEventDTO = {
       name: guildScheduledEvent.name,
       mainGroupID: group.id,
       location: guildScheduledEvent.channelId,
