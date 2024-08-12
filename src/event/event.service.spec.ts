@@ -315,8 +315,6 @@ describe('EventService', () => {
     const updatedEvent = await service.update({
       ...testEvent,
       id: randomUUID(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
       visibility: 'PUBLIC',
     });
 

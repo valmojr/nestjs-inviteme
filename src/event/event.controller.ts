@@ -15,6 +15,7 @@ import { Event, House, User } from '@prisma/client';
 import { BearerGuard } from '../auth/bearer.guard';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
+import { CreateEventDTO, UpdateEventDTO } from './event.entity';
 
 @UseGuards(BearerGuard)
 @Controller('event')
@@ -27,7 +28,7 @@ export class EventController {
   private readonly logger = new Logger(EventController.name);
 
   @Post()
-  async create(@Body() createEventDto: Event, @Req() req: Request) {
+  async create(@Body() createEventDto: CreateEventDTO, @Req() req: Request) {
     const { user } = await this.jwtService.verifyAsync(
       req.headers.authorization?.split(' ')[1],
       { secret: process.env.AUTH_SECRET },
@@ -70,12 +71,12 @@ export class EventController {
   }
 
   @Patch(':id')
-  updateById(@Param('id') id: string, @Body() updateEvent: Event) {
+  updateById(@Param('id') id: string, @Body() updateEvent: UpdateEventDTO) {
     return this.eventService.update({ id, ...updateEvent });
   }
 
   @Patch()
-  update(@Body() updateEvent: Event) {
+  update(@Body() updateEvent: UpdateEventDTO) {
     return this.eventService.update(updateEvent);
   }
 
@@ -85,7 +86,7 @@ export class EventController {
   }
 
   @Delete()
-  remove(@Body() removeEvent: Event) {
+  remove(@Body() removeEvent: Event | UpdateEventDTO) {
     return this.eventService.remove(removeEvent.id);
   }
 }

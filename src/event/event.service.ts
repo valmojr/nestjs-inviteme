@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Event, House } from '@prisma/client';
 import { randomUUID } from 'crypto';
-import { CreateEventDTO } from './event.type';
+import { CreateEventDTO, UpdateEventDTO } from './event.entity';
 
 function EventChecker(data: Event | CreateEventDTO) {
   if (!data.name || !data.startDate) {
@@ -36,12 +36,7 @@ export class EventService {
     EventChecker(data);
 
     return await this.prismaService.event.create({
-      data: {
-        id: `${randomUUID()}`,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        ...data,
-      },
+      data,
     });
   }
 
@@ -109,20 +104,17 @@ export class EventService {
     });
   }
 
-  async update(updateEvent: Event) {
-    EventChecker(updateEvent);
+  async update(data: UpdateEventDTO) {
+    EventChecker(data);
     return await this.prismaService.event.update({
       where: {
-        id: updateEvent.id,
+        id: data.id,
       },
-      data: {
-        ...updateEvent,
-        updatedAt: new Date(),
-      },
+      data,
     });
   }
 
-  async remove(data: string | Event) {
+  async remove(data: string | Event | UpdateEventDTO) {
     if (!data) {
       throw new BadRequestException('Event ID is required');
     }
