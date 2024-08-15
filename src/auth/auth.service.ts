@@ -40,7 +40,6 @@ export class AuthService {
     const userOnDatabase = await this.userService.findOne(user);
 
     if (userOnDatabase) {
-      this.logger.log(`User ${userOnDatabase.username} checked his identity`);
       return userOnDatabase;
     } else {
       return false;
@@ -50,8 +49,6 @@ export class AuthService {
   async discordOAuthCallback(code: string, response: Response) {
     let token: DiscordAccessToken;
     let user: any;
-
-    this.logger.log('Connecting to Discord OAuth Token Provider');
 
     const api_url = 'https://discord.com/api/oauth2/token';
     const body = new URLSearchParams();
@@ -78,8 +75,6 @@ export class AuthService {
       if (token.error) {
         throw new Error('Invalid Token provided');
       }
-
-      this.logger.log('Token provided => ', JSON.stringify(token));
     } catch (error) {
       throw new BadRequestException(`Failed to get access token: ${error}`);
     }
@@ -96,10 +91,6 @@ export class AuthService {
       const data = await response.json();
 
       user = data;
-
-      this.logger.log(
-        `Exchanged token for Discord User=> ${JSON.stringify(data)}`,
-      );
     } catch (error) {
       throw new BadRequestException(`Failed to get user: ${error}`);
     }
